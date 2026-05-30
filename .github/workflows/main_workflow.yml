@@ -52,6 +52,31 @@ jobs:
         shell: bash # In docker container github action default to sh
         run: ./syclenv create --install-prerequisites archlinux.acpp .yolo
 
-      - name: source the syclenv
+      - name: activate and deactivate restore shell environment
         shell: bash # In docker container github action default to sh
-        run: eval "$(./syclenv activate .yolo)"
+        run: |
+          set -euo pipefail
+
+          snapshot() {
+            {
+              export -p
+              declare -f || true
+            } | sort >"$1"
+          }
+
+          before="$(mktemp)"
+          after="$(mktemp)"
+          trap 'rm -f "$before" "$after"' EXIT
+
+          snapshot "$before"
+          eval "$(./syclenv activate .yolo)"
+          deactivate
+          snapshot "$after"
+
+          if ! diff -u "$before" "$after"; then
+            echo "Environment changed after activate + deactivate"
+            exit 1
+          fi
+
+          echo "activate/deactivate preserved shell environment"
+
