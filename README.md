@@ -11,3 +11,5 @@ eval "$(./syclenv activate .yolo)"
 
 To add a new env just create a folder somewhere in src/syclenv/envs with a setup.py in it.
 It should when called write activate scripts into the supplied path.
+
+The philosophy is that the env creation should be instantaneous (almost). Then the actual compilation and all occurs on first activation.

@@ -23,28 +23,11 @@ function clone_acpp {
 
 }
 
-
-
-check_prerequisites || return
-
-LLVM_INSTALL_DIR=""
-for ver in 21 20; do
-    if pacman -Q "llvm${ver}" &>/dev/null && [ -d "/usr/lib/llvm${ver}" ]; then
-        LLVM_INSTALL_DIR="/usr/lib/llvm${ver}"
-        break
-    fi
-done
-export LLVM_INSTALL_DIR
-
-
-
-export ACPP_VERSION=develop
-export ACPP_APPDB_DIR=/tmp/acpp-appdb # otherwise it would we in the $HOME/.acpp
 export ACPP_GIT_DIR=$SYCLENV_CURRENT_ENV_PATH/acpp-git
 export ACPP_BUILD_DIR=$SYCLENV_CURRENT_ENV_PATH/acpp-builddir
 export ACPP_INSTALL_DIR=$SYCLENV_CURRENT_ENV_PATH/acpp-installdir
 
-function setupcompiler {
+function run_setup {
 
     echo "-- setup variables -- "
     echo "- LLVM_INSTALL_DIR = $LLVM_INSTALL_DIR"
@@ -68,12 +51,21 @@ function setupcompiler {
     (cd ${ACPP_BUILD_DIR} && $MAKE_EXEC "${MAKE_OPT[@]}" && $MAKE_EXEC install) || return
 }
 
-
 if [ ! -f "$ACPP_INSTALL_DIR/bin/acpp" ]; then
-    echo " ----- acpp is not configured, compiling it ... -----"
-    setupcompiler || return
-    echo " ----- acpp configured ! -----"
+    echo " -- environment not configured, running setup -- "
+    run_setup || return
+    echo " -- environment setup complete -- "
 fi
 
 echo " -- environment enabled -- "
 echo "acpp available in \$ACPP_INSTALL_DIR = $ACPP_INSTALL_DIR"
+
+function deactivate {
+    _internal_deactivate
+    unset ACPP_GIT_DIR
+    unset ACPP_BUILD_DIR
+    unset ACPP_INSTALL_DIR
+    unset -f clone_acpp
+    unset -f run_setup
+    unset -f deactivate
+}

@@ -45,13 +45,29 @@ jobs:
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
 
       - name: build syclenv (fail if no prerequisites installed)
-        shell: bash # In docker container github action default to sh
-        run: uv run syclvenv create archlinux.acpp .yolo || true
+        shell: bash
+        run: ./syclenv create archlinux.acpp .yolo || true
 
       - name: build syclenv (and install prerequisites)
-        shell: bash # In docker container github action default to sh
-        run: uv run syclvenv create --install-prerequisites archlinux.acpp .yolo
+        shell: bash
+        run: ./syclenv create --install-prerequisites archlinux.acpp .yolo
 
-      - name: source the syclenv
-        shell: bash # In docker container github action default to sh
-        run: eval "$(uv run syclvenv activate .yolo)"
+      - name: activate syclenv
+        shell: bash
+        run: eval "$(./syclenv activate .yolo)"
+
+      - name: activate and deactivate restore shell environment
+        shell: bash
+        run: |
+          before="$(mktemp)"
+          after="$(mktemp)"
+          trap 'rm -f "$before" "$after"' EXIT
+
+          ./scripts/snapshot-shell-env.sh "$before"
+
+          eval "$(./syclenv activate .yolo)"
+          deactivate
+          ./scripts/snapshot-shell-env.sh "$after"
+
+          set -euo pipefail
+          ./scripts/compare-shell-env-snapshots.sh "$before" "$after"
