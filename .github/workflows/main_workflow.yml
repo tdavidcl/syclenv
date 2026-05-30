@@ -55,27 +55,15 @@ jobs:
       - name: activate and deactivate restore shell environment
         shell: bash
         run: |
-          set -euo pipefail
-
-          snapshot() {
-            {
-              export -p
-              declare -f || true
-            } | sort >"$1"
-          }
-
           before="$(mktemp)"
           after="$(mktemp)"
           trap 'rm -f "$before" "$after"' EXIT
 
-          snapshot "$before"
+          ./scripts/snapshot-shell-env.sh "$before"
+
           eval "$(./syclenv activate .yolo)"
           deactivate
-          snapshot "$after"
+          ./scripts/snapshot-shell-env.sh "$after"
 
-          if ! diff -u "$before" "$after"; then
-            echo "Environment changed after activate + deactivate"
-            exit 1
-          fi
-
-          echo "activate/deactivate preserved shell environment"
+          set -euo pipefail
+          ./scripts/compare-shell-env-snapshots.sh "$before" "$after"
