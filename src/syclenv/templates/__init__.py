@@ -32,14 +32,16 @@ def get_templates_list() -> dict[str, str]:
     return templates
 
 
-def setup_env(template_name: str, env_dir_path: str) -> None:
+def setup_env(
+    template_name: str, env_dir_path: str, install_prerequisites: bool
+) -> None:
     mod = get_template_module(template_name)
 
     print("--------------------------------")
     print(f"Setting up env {template_name} in {env_dir_path}")
     print("--------------------------------")
 
-    mod.setup(SetupArg(env_dir_path))
+    mod.setup(SetupArg(env_dir_path, install_prerequisites=install_prerequisites))
 
     print("--------------------------------")
     print("Setup complete")

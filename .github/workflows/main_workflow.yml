@@ -38,21 +38,20 @@ jobs:
             imagename: ArchLinux
 
     steps:
-      # if archlinux container
-      - name : Install archlinux dependencies
-        if: matrix.container == 'archlinux/archlinux:base-devel'
-        run: |
-          sudo pacman -Syu --noconfirm base-devel git python python-pip cmake boost ninja openmp openmpi doxygen llvm20 clang20 lld
 
       - uses: actions/checkout@v6
 
       - name: Install uv
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
 
-      - name: build syclenv
+      - name: build syclenv (fail if no prerequisites installed)
         shell: bash # In docker container github action default to sh
-        run: uv run syclvenv create .yolo archlinux.acpp
+        run: uv run syclvenv create archlinux.acpp .yolo || true
 
-      - name: test first sourcing of the syclenv
+      - name: build syclenv (and install prerequisites)
+        shell: bash # In docker container github action default to sh
+        run: uv run syclvenv create --install-prerequisites archlinux.acpp .yolo
+
+      - name: source the syclenv
         shell: bash # In docker container github action default to sh
         run: eval "$(uv run syclvenv activate .yolo)"
