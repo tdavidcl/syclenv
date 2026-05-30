@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 
 [project.scripts]
-syclvenv = "syclenv.main:main"
+syclenv = "syclenv.main:main"
 
 [build-system]
 requires = ["setuptools>=69"]
