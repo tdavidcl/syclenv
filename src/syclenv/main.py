@@ -1,6 +1,5 @@
+from syclenv.cli import main as cli_main
+
+
 def main() -> None:
-    print("Hello, world!")
-
-
-if __name__ == "__main__":
-    main()
+    raise SystemExit(cli_main())
