@@ -14,5 +14,4 @@ def cmd_create(args: argparse.Namespace) -> int:
 
     setup_env(args.template, args.path)
 
-    print(f'Activate it with: eval "$(syclvenv activate {args.path})"')
     return 0
