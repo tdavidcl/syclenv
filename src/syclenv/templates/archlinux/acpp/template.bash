@@ -32,13 +32,14 @@ mandatory_packages=(
     lld
 )
 
+missing_packages=()
 for package in "${mandatory_packages[@]}"; do
-    if pacman -Q "$package" >/dev/null 2>&1; then continue; else
+    if ! pacman -Q "$package" >/dev/null 2>&1; then
         missing_packages+=("$package")
     fi
 done
 
-if [ ${#missing_packages[@]} -eq 0 ]; then else
+if [ ${#missing_packages[@]} -gt 0 ]; then
     echo "Missing packages: ${missing_packages[*]}"
     echo "Install all missing packages using 'install_prerequisites' function"
     echo "  or manually with: sudo pacman -S ${missing_packages[*]}"
