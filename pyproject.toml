@@ -1,0 +1,19 @@
+[project]
+name = "syclenv"
+version = "0.1.0"
+description = "SYCL environment tooling"
+readme = "README.md"
+requires-python = ">=3.11"
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.0",
+    "ruff>=0.9",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
