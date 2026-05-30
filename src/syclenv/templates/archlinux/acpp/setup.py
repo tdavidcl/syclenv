@@ -1,8 +1,7 @@
 import subprocess
 import sys
-from pathlib import Path
 from importlib.resources import files
-
+from pathlib import Path
 
 from syclenv.detect_buildsystem import get_buildsystem_command
 from syclenv.templates.SetupArg import SetupArg
@@ -34,6 +33,7 @@ NAME = "Hello world env"
 
 template_file_bash = files(__package__) / "template.bash"
 template_file_prerequisites = files(__package__) / "prerequisites.bash"
+
 
 def check_prerequisites():
     # run the prerequisites.bash file
