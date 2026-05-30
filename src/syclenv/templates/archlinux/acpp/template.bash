@@ -23,14 +23,74 @@ function clone_acpp {
 
 }
 
+mandatory_packages=(
+    base-devel
+    git
+    cmake
+    boost
+    openmp
+    lld
+)
+
+for package in "${mandatory_packages[@]}"; do
+    if pacman -Q "$package" >/dev/null 2>&1; then continue; else
+        missing_packages+=("$package")
+    fi
+done
+
+if [ ${#missing_packages[@]} -eq 0 ]; then else
+    echo "Missing packages: ${missing_packages[*]}"
+    echo "Install all missing packages using 'install_prerequisites' function"
+    echo "  or manually with: sudo pacman -S ${missing_packages[*]}"
+fi
+
+
+function install_prerequisites {
+    echo " -- install prerequisites -- "
+    sudo pacman -Syu --noconfirm \
+       base-devel \
+       git \
+       cmake \
+       boost \
+       ninja \
+       openmp \
+       llvm20 \
+       clang20 \
+       lld
+}
+
+
+LLVM_INSTALL_DIR=""
+for ver in 21 20; do
+    if pacman -Q "llvm${ver}" &>/dev/null && [ -d "/usr/lib/llvm${ver}" ]; then
+        LLVM_INSTALL_DIR="/usr/lib/llvm${ver}"
+        break
+    fi
+done
+if [ -z "$LLVM_INSTALL_DIR" ]; then
+    echo "syclenv: no LLVM 20 or 21 found via pacman. Install one with:"
+    echo "     sudo pacman -S llvm20 clang20"
+    echo "  or sudo pacman -S llvm21 clang21"
+    return 1
+fi
+export LLVM_INSTALL_DIR
+
 export ACPP_VERSION=develop
 export ACPP_APPDB_DIR=/tmp/acpp-appdb # otherwise it would we in the $HOME/.acpp
 export ACPP_GIT_DIR=$SYCLENV_CURRENT_ENV_PATH/acpp-git
 export ACPP_BUILD_DIR=$SYCLENV_CURRENT_ENV_PATH/acpp-builddir
 export ACPP_INSTALL_DIR=$SYCLENV_CURRENT_ENV_PATH/acpp-installdir
-export LLVM_INSTALL_DIR=/usr/lib/llvm20
 
 function setupcompiler {
+    echo "-- setup variables -- "
+    echo "- LLVM_INSTALL_DIR = $LLVM_INSTALL_DIR"
+    echo "- ACPP_VERSION = $ACPP_VERSION"
+    echo "- ACPP_APPDB_DIR = $ACPP_APPDB_DIR"
+    echo "- ACPP_GIT_DIR = $ACPP_GIT_DIR"
+    echo "- ACPP_BUILD_DIR = $ACPP_BUILD_DIR"
+    echo "- ACPP_INSTALL_DIR = $ACPP_INSTALL_DIR"
+    echo "--------------------- "
+
     clone_acpp || return
     cmake -S ${ACPP_GIT_DIR} -B ${ACPP_BUILD_DIR} \
         ${CCACHE_CMAKE_ARG} \

@@ -42,7 +42,7 @@ jobs:
       - name : Install archlinux dependencies
         if: matrix.container == 'archlinux/archlinux:base-devel'
         run: |
-          sudo pacman -Syu --noconfirm base-devel git python python-pip cmake boost ninja openmp openmpi doxygen llvm20 clang20 lld
+          sudo pacman -Syu --noconfirm base-devel
 
       - uses: actions/checkout@v6
 
