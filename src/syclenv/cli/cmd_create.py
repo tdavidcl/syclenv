@@ -3,8 +3,8 @@ import argparse
 
 def add_parser_create(subparsers) -> argparse.ArgumentParser:
     parser = subparsers.add_parser("create", help="create a new environment")
-    parser.add_argument("path", help="environment path")
     parser.add_argument("template", help="template name")
+    parser.add_argument("path", help="environment path")
     parser.add_argument(
         "--install-prerequisites", action="store_true", help="install prerequisites"
     )
