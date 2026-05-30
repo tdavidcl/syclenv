@@ -2,7 +2,7 @@ import subprocess
 import sys
 
 
-def run_cmd(command, log_cmd=False, bash=True, log_error=True):
+def run_cmd(command, log_cmd=False, bash=True, log_error=True, live_output=False):
     sys.stdout.flush()
     sys.stderr.flush()
     if bash:
@@ -13,8 +13,8 @@ def run_cmd(command, log_cmd=False, bash=True, log_error=True):
             subprocess.run(
                 ["bash", "-c", command],
                 check=True,
-                stdout=sys.stdout,
-                stderr=subprocess.PIPE,
+                stdout=sys.stdout if live_output else subprocess.PIPE,
+                stderr=sys.stderr if live_output else subprocess.PIPE,
             )
         except subprocess.CalledProcessError as e:
             if log_error:
