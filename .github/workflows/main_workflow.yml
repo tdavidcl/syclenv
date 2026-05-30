@@ -38,11 +38,6 @@ jobs:
             imagename: ArchLinux
 
     steps:
-      # if archlinux container
-      - name : Install archlinux dependencies
-        if: matrix.container == 'archlinux/archlinux:base-devel'
-        run: |
-          sudo pacman -Syu --noconfirm base-devel
 
       - uses: actions/checkout@v6
 
@@ -53,6 +48,14 @@ jobs:
         shell: bash # In docker container github action default to sh
         run: uv run syclvenv create .yolo archlinux.acpp
 
-      - name: test first sourcing of the syclenv
+      - name: source the syclenv (no prerequisites installed)
+        shell: bash # In docker container github action default to sh
+        run: eval "$(uv run syclvenv activate .yolo)"
+
+      - name: Install prerequisites through the syclenv
+        shell: bash # In docker container github action default to sh
+        run: eval "$(uv run syclvenv activate .yolo)" && install_prerequisites
+
+      - name: source the syclenv (prerequisites installed)
         shell: bash # In docker container github action default to sh
         run: eval "$(uv run syclvenv activate .yolo)"
