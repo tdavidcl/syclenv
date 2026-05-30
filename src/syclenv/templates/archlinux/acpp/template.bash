@@ -52,8 +52,10 @@ function run_setup {
 }
 
 if [ ! -f "$ACPP_INSTALL_DIR/bin/acpp" ]; then
-    echo " -- environment not configured, please run 'run_setup' -- "
-else
-    echo " -- environment enabled -- "
-    echo "acpp available in \$ACPP_INSTALL_DIR = $ACPP_INSTALL_DIR"
+    echo " -- environment not configured, running setup -- "
+    run_setup || return
+    echo " -- environment setup complete -- "
 fi
+
+echo " -- environment enabled -- "
+echo "acpp available in \$ACPP_INSTALL_DIR = $ACPP_INSTALL_DIR"
