@@ -59,3 +59,13 @@ fi
 
 echo " -- environment enabled -- "
 echo "acpp available in \$ACPP_INSTALL_DIR = $ACPP_INSTALL_DIR"
+
+function deactivate {
+    _internal_deactivate
+    unset ACPP_GIT_DIR
+    unset ACPP_BUILD_DIR
+    unset ACPP_INSTALL_DIR
+    unset -f clone_acpp
+    unset -f run_setup
+    unset -f deactivate
+}

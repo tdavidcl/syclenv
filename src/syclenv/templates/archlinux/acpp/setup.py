@@ -117,6 +117,12 @@ def setup(arg: SetupArg):
         line = f"export {var}={value}"
         template += line + "\n"
 
+    template += "function _internal_deactivate {"
+    for var in ENV_VARS.keys():
+        template += f"  unset {var}\n"
+    template += "}\n"
+    template += "\n"
+
     # load template file
     with open(template_file_bash) as f:
         template += f.read()
