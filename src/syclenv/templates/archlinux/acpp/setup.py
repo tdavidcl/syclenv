@@ -80,6 +80,7 @@ def install_prerequisites():
         f"sudo pacman -S --noconfirm {' '.join(default_install_packages)}",
         log_cmd=True,
         log_error=True,
+        live_output=True,
     )
 
 
