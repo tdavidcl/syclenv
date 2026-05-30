@@ -35,7 +35,6 @@ def get_templates_list() -> dict[str, str]:
 def setup_env(template_name: str, env_dir_path: str) -> None:
     mod = get_template_module(template_name)
 
-
     print("--------------------------------")
     print(f"Setting up env {template_name} in {env_dir_path}")
     print("--------------------------------")
@@ -48,19 +47,18 @@ def setup_env(template_name: str, env_dir_path: str) -> None:
 
     # list all the activate scripts in env_dir_path
     activate_scripts = [s.name for s in Path(env_dir_path).glob("activate.*")]
-    
-    if(len(activate_scripts) == 0):
+
+    if len(activate_scripts) == 0:
         raise ValueError(f"No activate scripts found in {env_dir_path}")
-        
-    elif(len(activate_scripts) > 0):
+
+    elif len(activate_scripts) > 0:
         print(f"Shell support for {env_dir_path}:")
         for ascript in activate_scripts:
-            if( ascript.endswith(".sh")):
-                print("  sh -> eval \"$(syclvenv activate .yolo)\"")
-            elif( ascript.endswith(".bash")):
-                print("  bash -> eval \"$(syclvenv activate .yolo)\"")
-            elif( ascript.endswith(".zsh")):
-                print("  zsh -> eval \"$(syclvenv activate .yolo)\"")
+            if ascript.endswith(".sh"):
+                print('  sh -> eval "$(syclvenv activate .yolo)"')
+            elif ascript.endswith(".bash"):
+                print('  bash -> eval "$(syclvenv activate .yolo)"')
+            elif ascript.endswith(".zsh"):
+                print('  zsh -> eval "$(syclvenv activate .yolo)"')
             else:
                 print(ascript)
-    
