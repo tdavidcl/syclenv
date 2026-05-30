@@ -1,13 +1,67 @@
+import subprocess
+import sys
 from pathlib import Path
 
 from syclenv.detect_buildsystem import get_buildsystem_command
 from syclenv.templates.SetupArg import SetupArg
 
+
+def run_cmd(command, log_cmd=False, bash=True):
+    sys.stdout.flush()
+    sys.stderr.flush()
+    if bash:
+        if log_cmd:
+            print(f"   Running command : bash -c '{command}'")
+
+        try:
+            subprocess.run(
+                ["bash", "-c", command],
+                check=True,
+                stdout=sys.stdout,
+                stderr=subprocess.PIPE,
+            )
+        except subprocess.CalledProcessError as e:
+            print(f"Error running command: {e}")
+            return False
+        return True
+    else:
+        raise NotImplementedError("Only bash=True is currently supported for run_cmd")
+
+
 NAME = "Hello world env"
+
+
+template_file_bash = Path(__file__).parent / "template.bash"
+template_file_prerequisites = Path(__file__).parent / "prerequisites.bash"
+
+
+def check_prerequisites():
+    # run the prerequisites.bash file
+    if not run_cmd(
+        "source "
+        + template_file_prerequisites.absolute().__str__()
+        + " && check_prerequisites"
+    ):
+        raise ValueError("Prerequisites are not installed")
+
+
+def install_prerequisites():
+    # run the prerequisites.bash file
+    if not run_cmd(
+        "source "
+        + template_file_prerequisites.absolute().__str__()
+        + " && install_prerequisites"
+    ):
+        raise ValueError("Issue installing prerequisites")
 
 
 def setup(arg: SetupArg):
     print(f"Hello, World! {arg.path}")
+
+    if arg.install_prerequisites:
+        install_prerequisites()
+
+    check_prerequisites()
 
     generator, cmake_generator = get_buildsystem_command()
 
@@ -23,7 +77,7 @@ def setup(arg: SetupArg):
     Path(arg.path).mkdir(parents=True, exist_ok=True)
 
     # load template file
-    with open(Path(__file__).parent / "template.bash") as f:
+    with open(template_file_bash) as f:
         template = f.read()
 
     # add env vars to template
