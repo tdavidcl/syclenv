@@ -53,4 +53,4 @@ if [ ! -f "$ACPP_INSTALL_DIR/bin/acpp" ]; then
 fi
 
 echo " -- environment enabled -- "
-echo "acpp is installed in \$ACPP_INSTALL_DIR = $ACPP_INSTALL_DIR"
+echo "acpp available in \$ACPP_INSTALL_DIR = $ACPP_INSTALL_DIR"
