@@ -23,23 +23,6 @@ function clone_acpp {
 
 }
 
-
-
-check_prerequisites || return
-
-LLVM_INSTALL_DIR=""
-for ver in 21 20; do
-    if pacman -Q "llvm${ver}" &>/dev/null && [ -d "/usr/lib/llvm${ver}" ]; then
-        LLVM_INSTALL_DIR="/usr/lib/llvm${ver}"
-        break
-    fi
-done
-export LLVM_INSTALL_DIR
-
-
-
-export ACPP_VERSION=develop
-export ACPP_APPDB_DIR=/tmp/acpp-appdb # otherwise it would we in the $HOME/.acpp
 export ACPP_GIT_DIR=$SYCLENV_CURRENT_ENV_PATH/acpp-git
 export ACPP_BUILD_DIR=$SYCLENV_CURRENT_ENV_PATH/acpp-builddir
 export ACPP_INSTALL_DIR=$SYCLENV_CURRENT_ENV_PATH/acpp-installdir
