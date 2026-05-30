@@ -19,9 +19,30 @@ jobs:
 
 
   tests:
-    name: Tests
-    runs-on: ubuntu-latest
+    name: "${{ matrix.imagename }} -- ${{ matrix.machine }} -- ${{ matrix.args }}"
+    runs-on: ${{ matrix.runson }}
+
+    container:
+      image: ${{ matrix.container }}
+
+    strategy:
+      matrix:
+        include:
+
+          ##########################################################################################
+          # Arch Linux
+          ##########################################################################################
+          - machine: archlinux.acpp
+            container: archlinux/archlinux:base-devel
+            runson: ubuntu-latest
+            imagename: ArchLinux
+
     steps:
+      # if archlinux container
+      - name : Install archlinux dependencies
+        if: matrix.container == 'archlinux/archlinux:base-devel'
+        run: |
+          sudo pacman -Syu --noconfirm base-devel git python python-pip cmake boost ninja openmp openmpi doxygen llvm20 clang20 lld
 
       - uses: actions/checkout@v6
 
