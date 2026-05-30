@@ -72,9 +72,17 @@ if [ -z "$LLVM_INSTALL_DIR" ]; then
     echo "syclenv: no LLVM 20 or 21 found via pacman. Install one with:"
     echo "     sudo pacman -S llvm20 clang20"
     echo "  or sudo pacman -S llvm21 clang21"
-    return 1
+    LLVM_INSTALL_DIR="not found"
+    missing_packages+=("llvm20")
+    missing_packages+=("clang20")
 fi
 export LLVM_INSTALL_DIR
+
+
+VALID_ENV=true
+if [ ${#missing_packages[@]} -gt 0 ]; then
+    VALID_ENV=false
+fi
 
 export ACPP_VERSION=develop
 export ACPP_APPDB_DIR=/tmp/acpp-appdb # otherwise it would we in the $HOME/.acpp
@@ -83,6 +91,11 @@ export ACPP_BUILD_DIR=$SYCLENV_CURRENT_ENV_PATH/acpp-builddir
 export ACPP_INSTALL_DIR=$SYCLENV_CURRENT_ENV_PATH/acpp-installdir
 
 function setupcompiler {
+
+    if [ "$VALID_ENV" = false ]; then
+        return 1
+    fi
+
     echo "-- setup variables -- "
     echo "- LLVM_INSTALL_DIR = $LLVM_INSTALL_DIR"
     echo "- ACPP_VERSION = $ACPP_VERSION"
@@ -105,11 +118,17 @@ function setupcompiler {
     (cd ${ACPP_BUILD_DIR} && $MAKE_EXEC "${MAKE_OPT[@]}" && $MAKE_EXEC install) || return
 }
 
-if [ ! -f "$ACPP_INSTALL_DIR/bin/acpp" ]; then
-    echo " ----- acpp is not configured, compiling it ... -----"
-    setupcompiler || return
-    echo " ----- acpp configured ! -----"
-fi
+if [ "$VALID_ENV" = false ]; then
+    echo " -- environment is not valid, please install the missing packages -- "
+else
 
-echo " -- environment enabled -- "
-echo "acpp available in \$ACPP_INSTALL_DIR = $ACPP_INSTALL_DIR"
+    if [ ! -f "$ACPP_INSTALL_DIR/bin/acpp" ]; then
+        echo " ----- acpp is not configured, compiling it ... -----"
+        setupcompiler || return
+        echo " ----- acpp configured ! -----"
+    fi
+
+    echo " -- environment enabled -- "
+    echo "acpp available in \$ACPP_INSTALL_DIR = $ACPP_INSTALL_DIR"
+
+fi
