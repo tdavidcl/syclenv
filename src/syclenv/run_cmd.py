@@ -1,6 +1,7 @@
 import subprocess
 import sys
 
+
 def run_cmd(command, log_cmd=False, bash=True, log_error=True):
     sys.stdout.flush()
     sys.stderr.flush()
