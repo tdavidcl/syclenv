@@ -72,6 +72,9 @@ default_install_packages = [
     "lld",
     "numactl",
     "python",
+
+    # so much faster than make
+    "ninja",
 ]
 
 
