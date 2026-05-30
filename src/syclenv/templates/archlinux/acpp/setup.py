@@ -77,7 +77,7 @@ default_install_packages = [
 
 def install_prerequisites():
     run_cmd(
-        f"sudo pacman -S --noconfirm {' '.join(default_install_packages)}",
+        f"sudo pacman -Sy --noconfirm {' '.join(default_install_packages)}",
         log_cmd=True,
         log_error=True,
         live_output=True,
