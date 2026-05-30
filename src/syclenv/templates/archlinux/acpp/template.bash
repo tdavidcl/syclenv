@@ -23,13 +23,11 @@ function clone_acpp {
 
 }
 
-
-
 export ACPP_VERSION=develop
 export ACPP_APPDB_DIR=/tmp/acpp-appdb # otherwise it would we in the $HOME/.acpp
-export ACPP_GIT_DIR=$SYCLENV_CURRENT_ENV_PATH/.env/acpp-git
-export ACPP_BUILD_DIR=$SYCLENV_CURRENT_ENV_PATH/.env/acpp-builddir
-export ACPP_INSTALL_DIR=$SYCLENV_CURRENT_ENV_PATH/.env/acpp-installdir
+export ACPP_GIT_DIR=$SYCLENV_CURRENT_ENV_PATH/acpp-git
+export ACPP_BUILD_DIR=$SYCLENV_CURRENT_ENV_PATH/acpp-builddir
+export ACPP_INSTALL_DIR=$SYCLENV_CURRENT_ENV_PATH/acpp-installdir
 export LLVM_INSTALL_DIR=/usr/lib/llvm20
 
 function setupcompiler {
