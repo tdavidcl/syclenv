@@ -29,6 +29,8 @@ def cmd_activate(args: argparse.Namespace) -> int:
     current_shell = detect_shell()
     if(current_shell == "sh" and "sh" in supported_shells):
         print("source " + args.path + "/activate.sh")
+    elif(current_shell == "bash" and "bash" in supported_shells):
+        print("source " + args.path + "/activate.bash")
     elif(current_shell == "zsh" and "zsh" in supported_shells):
         print("source " + args.path + "/activate.zsh")
     else:

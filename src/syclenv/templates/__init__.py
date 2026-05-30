@@ -57,6 +57,8 @@ def setup_env(template_name: str, env_dir_path: str) -> None:
         for ascript in activate_scripts:
             if( ascript.endswith(".sh")):
                 print("  sh -> eval \"$(syclvenv activate .yolo)\"")
+            elif( ascript.endswith(".bash")):
+                print("  bash -> eval \"$(syclvenv activate .yolo)\"")
             elif( ascript.endswith(".zsh")):
                 print("  zsh -> eval \"$(syclvenv activate .yolo)\"")
             else:
