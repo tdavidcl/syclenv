@@ -4,7 +4,7 @@ from syclenv.detect_shell import detect_shell
 
 
 def add_parser_diagnose(subparsers) -> argparse.ArgumentParser:
-    parser = subparsers.add_parser("diagnose", help="diagnose an environment")
+    parser = subparsers.add_parser("diagnose", help="diagnose the cli tool")
     parser.set_defaults(func=cmd_diagnose)
     return parser
 
