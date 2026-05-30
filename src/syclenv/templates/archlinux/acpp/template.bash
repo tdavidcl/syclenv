@@ -27,7 +27,7 @@ export ACPP_GIT_DIR=$SYCLENV_CURRENT_ENV_PATH/acpp-git
 export ACPP_BUILD_DIR=$SYCLENV_CURRENT_ENV_PATH/acpp-builddir
 export ACPP_INSTALL_DIR=$SYCLENV_CURRENT_ENV_PATH/acpp-installdir
 
-function setupcompiler {
+function run_setup {
 
     echo "-- setup variables -- "
     echo "- LLVM_INSTALL_DIR = $LLVM_INSTALL_DIR"
@@ -51,12 +51,9 @@ function setupcompiler {
     (cd ${ACPP_BUILD_DIR} && $MAKE_EXEC "${MAKE_OPT[@]}" && $MAKE_EXEC install) || return
 }
 
-
 if [ ! -f "$ACPP_INSTALL_DIR/bin/acpp" ]; then
-    echo " ----- acpp is not configured, compiling it ... -----"
-    setupcompiler || return
-    echo " ----- acpp configured ! -----"
+    echo " -- environment not configured, please run 'run_setup' -- "
+else
+    echo " -- environment enabled -- "
+    echo "acpp available in \$ACPP_INSTALL_DIR = $ACPP_INSTALL_DIR"
 fi
-
-echo " -- environment enabled -- "
-echo "acpp available in \$ACPP_INSTALL_DIR = $ACPP_INSTALL_DIR"
