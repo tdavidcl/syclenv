@@ -46,12 +46,12 @@ jobs:
 
       - name: build syclenv (fail if no prerequisites installed)
         shell: bash # In docker container github action default to sh
-        run: uv run syclvenv create archlinux.acpp .yolo || true
+        run: ./syclenv create archlinux.acpp .yolo || true
 
       - name: build syclenv (and install prerequisites)
         shell: bash # In docker container github action default to sh
-        run: uv run syclvenv create --install-prerequisites archlinux.acpp .yolo
+        run: ./syclenv create --install-prerequisites archlinux.acpp .yolo
 
       - name: source the syclenv
         shell: bash # In docker container github action default to sh
-        run: eval "$(uv run syclvenv activate .yolo)"
+        run: eval "$(./syclenv activate .yolo)"
