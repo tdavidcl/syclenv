@@ -30,7 +30,6 @@ export ACPP_APPDB_DIR=/tmp/acpp-appdb # otherwise it would we in the $HOME/.acpp
 export ACPP_GIT_DIR=$SYCLENV_CURRENT_ENV_PATH/.env/acpp-git
 export ACPP_BUILD_DIR=$SYCLENV_CURRENT_ENV_PATH/.env/acpp-builddir
 export ACPP_INSTALL_DIR=$SYCLENV_CURRENT_ENV_PATH/.env/acpp-installdir
-export ACPP_DEBUG_LEVEL=0
 export LLVM_INSTALL_DIR=/usr/lib/llvm20
 
 function setupcompiler {
@@ -52,3 +51,6 @@ if [ ! -f "$ACPP_INSTALL_DIR/bin/acpp" ]; then
     setupcompiler || return
     echo " ----- acpp configured ! -----"
 fi
+
+echo " -- environment enabled -- "
+echo "acpp is installed in \$ACPP_INSTALL_DIR = $ACPP_INSTALL_DIR"

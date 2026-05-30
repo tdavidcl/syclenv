@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from syclenv.detect_buildsystem import get_buildsystem_command
 from syclenv.templates.SetupArg import SetupArg
 
 NAME = "Hello world env"
@@ -8,7 +9,15 @@ NAME = "Hello world env"
 def setup(arg: SetupArg):
     print(f"Hello, World! {arg.path}")
 
-    ENV_VARS = {"SYCLENV_CURRENT_ENV_PATH": Path(arg.path).absolute()}
+    generator, cmake_generator = get_buildsystem_command()
+
+    ENV_VARS = {
+        "SYCLENV_CURRENT_ENV_PATH": Path(arg.path).absolute(),
+        "CMAKE_GENERATOR": cmake_generator,
+        "MAKE_EXEC": generator,
+        "MAKE_OPT": "()",
+        "CMAKE_OPT": "()",
+    }
 
     # create a dir at the path
     Path(arg.path).mkdir(parents=True, exist_ok=True)
