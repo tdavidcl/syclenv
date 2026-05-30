@@ -57,7 +57,8 @@ function install_prerequisites {
        openmp \
        llvm20 \
        clang20 \
-       lld
+       lld \
+       numactl
 }
 
 
