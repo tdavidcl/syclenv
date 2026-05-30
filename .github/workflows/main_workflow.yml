@@ -45,15 +45,15 @@ jobs:
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
 
       - name: build syclenv (fail if no prerequisites installed)
-        shell: bash # In docker container github action default to sh
+        shell: bash
         run: ./syclenv create archlinux.acpp .yolo || true
 
       - name: build syclenv (and install prerequisites)
-        shell: bash # In docker container github action default to sh
+        shell: bash
         run: ./syclenv create --install-prerequisites archlinux.acpp .yolo
 
       - name: activate and deactivate restore shell environment
-        shell: bash # In docker container github action default to sh
+        shell: bash
         run: |
           set -euo pipefail
 
