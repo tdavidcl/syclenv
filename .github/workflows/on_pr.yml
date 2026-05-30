@@ -1,0 +1,16 @@
+name: on PR
+
+# Controls when the workflow will run
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ci-${{github.ref}}-${{github.event.pull_request.number || github.run_number}}
+  cancel-in-progress: true
+
+jobs:
+
+  main_workflow:
+    name: CI
+    uses: ./.github/workflows/main_workflow.yml
