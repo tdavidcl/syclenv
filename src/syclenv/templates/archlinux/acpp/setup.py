@@ -76,14 +76,18 @@ def setup(arg: SetupArg):
     # create a dir at the path
     Path(arg.path).mkdir(parents=True, exist_ok=True)
 
-    # load template file
-    with open(template_file_bash) as f:
+    # load prerequisites file
+    with open(template_file_prerequisites) as f:
         template = f.read()
 
     # add env vars to template
     for var, value in ENV_VARS.items():
         line = f"export {var}={value}"
-        template = line + "\n" + template
+        template += line + "\n"
+
+    # load template file
+    with open(template_file_bash) as f:
+        template += f.read()
 
     # create a file called activate.bash
     with open(arg.path + "/activate.bash", "w") as f:
