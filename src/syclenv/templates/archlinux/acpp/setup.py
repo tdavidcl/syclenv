@@ -72,7 +72,6 @@ default_install_packages = [
     "lld",
     "numactl",
     "python",
-
     # so much faster than make
     "ninja",
 ]
@@ -99,7 +98,7 @@ def setup(arg: SetupArg):
 
     ENV_VARS = {
         "SYCLENV_CURRENT_ENV_PATH": Path(arg.path).absolute(),
-        "CMAKE_GENERATOR": cmake_generator,
+        "CMAKE_GENERATOR": '"' + cmake_generator + '"',
         "MAKE_EXEC": generator,
         "MAKE_OPT": "()",
         "CMAKE_OPT": "()",
