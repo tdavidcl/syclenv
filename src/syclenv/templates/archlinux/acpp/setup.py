@@ -1,6 +1,8 @@
 import subprocess
 import sys
 from pathlib import Path
+from importlib.resources import files
+
 
 from syclenv.detect_buildsystem import get_buildsystem_command
 from syclenv.templates.SetupArg import SetupArg
@@ -30,10 +32,8 @@ def run_cmd(command, log_cmd=False, bash=True):
 
 NAME = "Hello world env"
 
-
-template_file_bash = Path(__file__).parent / "template.bash"
-template_file_prerequisites = Path(__file__).parent / "prerequisites.bash"
-
+template_file_bash = files(__package__) / "template.bash"
+template_file_prerequisites = files(__package__) / "prerequisites.bash"
 
 def check_prerequisites():
     # run the prerequisites.bash file
