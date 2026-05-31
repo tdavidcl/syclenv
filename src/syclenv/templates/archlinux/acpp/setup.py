@@ -94,7 +94,7 @@ class ArchLinuxAcppTemplate(TemplateBase):
     def create_env(self) -> None:
         generator, cmake_generator = get_buildsystem_command()
 
-        ENV_VARS = {
+        env_vars = {
             "SYCLENV_CURRENT_ENV_PATH": Path(self.args.path).absolute(),
             "CMAKE_GENERATOR": '"' + cmake_generator + '"',
             "MAKE_EXEC": generator,
@@ -111,12 +111,12 @@ class ArchLinuxAcppTemplate(TemplateBase):
         template = ""
 
         # add env vars to template
-        for var, value in ENV_VARS.items():
+        for var, value in env_vars.items():
             line = f"export {var}={value}"
             template += line + "\n"
 
         template += "function _internal_deactivate {"
-        for var in ENV_VARS.keys():
+        for var in env_vars.keys():
             template += f"  unset {var}\n"
         template += "}\n"
         template += "\n"
