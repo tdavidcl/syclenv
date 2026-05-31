@@ -1,4 +1,5 @@
 import importlib
+from importlib.resources import files
 from pathlib import Path
 from types import ModuleType
 
@@ -10,7 +11,7 @@ from syclenv.templates.SetupArg import SetupArg
 
 console = Console()
 
-TEMPLATES_DIR = Path(__file__).parent
+TEMPLATES_DIR = files(__package__)
 
 
 def _setup_path(template_name: str) -> Path:
