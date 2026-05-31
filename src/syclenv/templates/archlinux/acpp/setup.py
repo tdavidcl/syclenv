@@ -3,29 +3,16 @@ from pathlib import Path
 
 from syclenv.detect_buildsystem import get_buildsystem_command
 from syclenv.run_cmd import run_cmd
+from syclenv.templates.archlinux.utils import (
+    get_pacman_llvm_install_dir,
+    get_pacman_llvm_version,
+    has_pacman_package,
+)
 from syclenv.templates.SetupArg import SetupArg
 from syclenv.templates.TemplateBase import TemplateBase
 
 template_file_bash = files(__package__) / "template.bash"
 template_file_prerequisites = files(__package__) / "prerequisites.bash"
-
-
-def has_pacman_package(package: str) -> bool:
-    return run_cmd(f"pacman -Q {package} >/dev/null 2>&1", log_error=False)
-
-
-def get_pacman_llvm_version() -> str:
-    for ver in [21, 20]:
-        if has_pacman_package(f"llvm{ver}") and has_pacman_package(f"clang{ver}"):
-            return ver
-    return None
-
-
-def get_pacman_llvm_install_dir() -> str:
-    llvm_version = get_pacman_llvm_version()
-    if llvm_version is None:
-        return None
-    return f"/usr/lib/llvm{llvm_version}"
 
 
 mandatory_packages = [
