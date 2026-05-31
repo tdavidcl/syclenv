@@ -37,6 +37,9 @@ jobs:
             runson: ubuntu-latest
             imagename: ArchLinux
 
+    env:
+      FORCE_COLOR: true
+
     steps:
 
       - uses: actions/checkout@v6
