@@ -2,6 +2,7 @@ import importlib
 from pathlib import Path
 from types import ModuleType
 
+from syclenv.templates import TemplateBase
 from syclenv.templates.SetupArg import SetupArg
 
 TEMPLATES_DIR = Path(__file__).parent
@@ -28,12 +29,23 @@ def get_templates_list() -> dict[str, str]:
     for setup_py in TEMPLATES_DIR.glob("**/setup.py"):
         template_name = ".".join(setup_py.relative_to(TEMPLATES_DIR).parts[:-1])
         mod = get_template_module(template_name)
-        templates[template_name] = mod.NAME
+        templates[template_name] = mod.TEMPLATE_CLASS.name
     return templates
 
 
+def run_setup(template_class: TemplateBase, install_prerequisites: bool):
+    if install_prerequisites:
+        template_class.install_prerequisites()
+
+    print(f"Checking prerequisites for {template_class.name}")
+    template_class.check_prerequisites()
+    print(f"Creating env for {template_class.name}")
+    template_class.create_env()
+    print(f"Env created for {template_class.name}")
+
+
 def setup_env(
-    template_name: str, env_dir_path: str, install_prerequisites: bool
+    template_name: str, env_dir_path: str, install_prerequisites: bool, noconfirm: bool
 ) -> None:
     mod = get_template_module(template_name)
 
@@ -41,7 +53,8 @@ def setup_env(
     print(f"Setting up env {template_name} in {env_dir_path}")
     print("--------------------------------")
 
-    mod.setup(SetupArg(env_dir_path, install_prerequisites=install_prerequisites))
+    setup_arg = SetupArg(env_dir_path, noconfirm)
+    run_setup(mod.TEMPLATE_CLASS(setup_arg), install_prerequisites)
 
     print("--------------------------------")
     print("Setup complete")

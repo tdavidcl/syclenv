@@ -1,4 +1,4 @@
 class SetupArg:
-    def __init__(self, path: str, install_prerequisites: bool):
+    def __init__(self, path: str, noconfirm: bool = False):
         self.path = path
-        self.install_prerequisites = install_prerequisites
+        self.noconfirm = noconfirm
