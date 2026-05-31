@@ -8,6 +8,9 @@ def add_parser_create(subparsers) -> argparse.ArgumentParser:
     parser.add_argument(
         "--install-prerequisites", action="store_true", help="install prerequisites"
     )
+    parser.add_argument(
+        "--noconfirm", action="store_true", help="do not confirm commands"
+    )
     parser.set_defaults(func=cmd_create)
     return parser
 
@@ -16,7 +19,10 @@ def cmd_create(args: argparse.Namespace) -> int:
     from syclenv.templates import setup_env
 
     setup_env(
-        args.template, args.path, install_prerequisites=args.install_prerequisites
+        args.template,
+        args.path,
+        install_prerequisites=args.install_prerequisites,
+        noconfirm=args.noconfirm,
     )
 
     return 0

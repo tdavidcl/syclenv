@@ -37,7 +37,30 @@ jobs:
             runson: ubuntu-latest
             imagename: ArchLinux
 
+    env:
+      FORCE_COLOR: true
+
     steps:
+      - name: Install ccache
+        if: matrix.machine == 'archlinux.acpp'
+        run: |
+          sudo pacman -Sy --noconfirm ccache
+
+      - uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ github.job }}-${{matrix.machine}}-${{matrix.ccache-key-extra}}
+          verbose: 2
+
+      - name: Configure ccache
+        shell: bash
+        run: |
+          echo " ----- ccache configuration ----- "
+          echo " Old configuration: "
+          ccache -p
+          echo " ----- New configuration:   ----- "
+          ccache -o compiler_check='%compiler% -dumpmachine; %compiler% -dumpversion'
+          ccache -p
+          echo " ----- ccache configuration done ----- "
 
       - uses: actions/checkout@v6
 
@@ -50,7 +73,7 @@ jobs:
 
       - name: build syclenv (and install prerequisites)
         shell: bash
-        run: ./syclenv create --install-prerequisites archlinux.acpp .yolo
+        run: ./syclenv create --noconfirm --install-prerequisites archlinux.acpp .yolo
 
       - name: activate syclenv
         shell: bash

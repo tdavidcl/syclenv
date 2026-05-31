@@ -4,6 +4,9 @@ version = "0.1.0"
 description = "SYCL environment tooling"
 readme = "README.md"
 requires-python = ">=3.11"
+dependencies = [
+    "rich>=13.0",
+]
 
 [project.scripts]
 syclenv = "syclenv.main:main"

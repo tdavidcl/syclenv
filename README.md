@@ -1,4 +1,4 @@
-# syclenv
+# SYCLENV (what if python venvs existed for SYCL)
 
 ## TLDR
 
