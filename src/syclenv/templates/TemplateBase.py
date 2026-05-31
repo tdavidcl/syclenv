@@ -13,7 +13,7 @@ class TemplateBase(Protocol):
         raise NotImplementedError
 
     @abstractmethod
-    def check_prerequisites(self) -> None:
+    def check_prerequisites(self) -> tuple[bool, str]:
         raise NotImplementedError
 
     @abstractmethod

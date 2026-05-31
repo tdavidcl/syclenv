@@ -2,8 +2,13 @@ import importlib
 from pathlib import Path
 from types import ModuleType
 
+from rich.console import Console
+from rich.panel import Panel
+
 from syclenv.templates import TemplateBase
 from syclenv.templates.SetupArg import SetupArg
+
+console = Console()
 
 TEMPLATES_DIR = Path(__file__).parent
 
@@ -33,16 +38,34 @@ def get_templates_list() -> dict[str, str]:
     return templates
 
 
+def print_panel(title: str, message: str, color: str = "red"):
+    panel = Panel(
+        message,
+        title=title,
+        border_style=color,
+    )
+    console.print(panel)
+
+
 def run_setup(template_class: TemplateBase, install_prerequisites: bool):
-    try:
-        template_class.check_prerequisites()
-    except Exception as e:
-        print(f"Checking prerequisites for {template_class.name} failed: {e}")
+    print(f"Checking prerequisites for {template_class.name}")
+    is_ok, error_message = template_class.check_prerequisites()
+
+    if not is_ok:
         if install_prerequisites:
+            print_panel("prerequisites failed", error_message, color="yellow")
+            print("Installing prerequisites...")
             template_class.install_prerequisites()
 
-    print(f"Checking prerequisites for {template_class.name}")
-    template_class.check_prerequisites()
+            print(f"Checking prerequisites again for {template_class.name}")
+            is_ok, error_message = template_class.check_prerequisites()
+            if not is_ok:
+                print_panel("Error", error_message, color="red")
+                raise ValueError("Prerequisites failed")
+        else:
+            print_panel("Error", error_message, color="red")
+            raise ValueError("Prerequisites failed")
+
     print(f"Creating env for {template_class.name}")
     template_class.create_env()
     print(f"Env created for {template_class.name}")

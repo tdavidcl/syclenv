@@ -35,7 +35,7 @@ mandatory_packages = [
     "boost",
     "openmp",
     "lld",
-    "numactl",
+    "aaaanumactl",
     "python",
 ]
 
@@ -63,9 +63,9 @@ class ArchLinuxAcppTemplate(TemplateBase):
     def __init__(self, args: SetupArg):
         self.args = args
 
-    def check_prerequisites(self) -> None:
+    def check_prerequisites(self) -> tuple[bool, str]:
         if get_pacman_llvm_version() is None:
-            raise ValueError(
+            return False, (
                 "No LLVM 20 or 21 found via pacman. Install one with:\n"
                 "sudo pacman -S llvm20 clang20 or sudo pacman -S llvm21 clang21"
             )
@@ -77,10 +77,11 @@ class ArchLinuxAcppTemplate(TemplateBase):
 
         if len(missing_packages) > 0:
             str_missing_packages = " ".join(missing_packages)
-            raise ValueError(
+            return False, (
                 f"Missing packages: {str_missing_packages}. Install them with:\n"
                 f"sudo pacman -S {str_missing_packages}"
             )
+        return True, None
 
     def install_prerequisites(self) -> None:
         cmd = f"sudo pacman -Sy --noconfirm {' '.join(default_install_packages)}"
