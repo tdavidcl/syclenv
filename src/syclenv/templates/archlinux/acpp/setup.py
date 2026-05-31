@@ -108,7 +108,7 @@ class ArchLinuxAcppTemplate(TemplateBase):
         Path(self.args.path).mkdir(parents=True, exist_ok=True)
 
         template = ""
-
+        
         # add env vars to template
         for var, value in ENV_VARS.items():
             line = f"export {var}={value}"
@@ -124,9 +124,19 @@ class ArchLinuxAcppTemplate(TemplateBase):
 
         with open(self.args.path + "/activate.zsh", "w") as f:
             f.write(template)
+            
+        template += "function _internal_deactivate {"
+        for var in ENV_VARS.keys():
+            template += f"  unset {var}\n"
+        template += "}\n"
+        template += "\n"
 
-        with open(self.args.path + "/activate.sh", "w") as f:
-            f.write(template)
+        # load template file
+        with open(template_file_bash) as f:
+            template += f.read()
+
+            with open(self.args.path + "/activate.sh", "w") as f:
+                f.write(template)
 
 
 TEMPLATE_CLASS = ArchLinuxAcppTemplate

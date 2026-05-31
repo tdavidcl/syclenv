@@ -2,6 +2,11 @@
 
 if command -v uv >/dev/null 2>&1; then
     exec uv run syclenv "$@"
-else
+elif command -v python >/dev/null 2>&1; then
     exec python -m syclenv "$@"
+elif command -v python3 >/dev/null 2>&1; then
+    exec python3 -m syclenv "$@"
+else
+    echo "No python, python3, or uv found"
+    exit 1
 fi
