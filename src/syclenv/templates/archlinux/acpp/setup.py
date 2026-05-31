@@ -86,9 +86,9 @@ class ArchLinuxAcppTemplate(TemplateBase):
         cmd = f"sudo pacman -Sy --noconfirm {' '.join(default_install_packages)}"
 
         if self.args.noconfirm:
-            run_cmd(cmd, log_cmd=True, ask_confirm=False)
+            run_cmd(cmd, log_cmd=True, ask_confirm=False, live_output=True)
         else:
-            run_cmd(cmd, log_cmd=True, ask_confirm=True)
+            run_cmd(cmd, log_cmd=True, ask_confirm=True, live_output=True)
 
     def create_env(self) -> None:
         generator, cmake_generator = get_buildsystem_command()
