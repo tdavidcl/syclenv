@@ -50,7 +50,7 @@ jobs:
 
       - name: build syclenv (and install prerequisites)
         shell: bash
-        run: ./syclenv create --install-prerequisites archlinux.acpp .yolo
+        run: ./syclenv create --noconfirm --install-prerequisites archlinux.acpp .yolo
 
       - name: activate syclenv
         shell: bash
