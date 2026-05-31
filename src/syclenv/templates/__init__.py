@@ -34,8 +34,12 @@ def get_templates_list() -> dict[str, str]:
 
 
 def run_setup(template_class: TemplateBase, install_prerequisites: bool):
-    if install_prerequisites:
-        template_class.install_prerequisites()
+    try:
+        template_class.check_prerequisites()
+    except Exception as e:
+        print(f"Checking prerequisites for {template_class.name} failed: {e}")
+        if install_prerequisites:
+            template_class.install_prerequisites()
 
     print(f"Checking prerequisites for {template_class.name}")
     template_class.check_prerequisites()
