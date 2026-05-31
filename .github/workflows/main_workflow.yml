@@ -41,6 +41,15 @@ jobs:
       FORCE_COLOR: true
 
     steps:
+      - name: Install ccache
+        if: matrix.machine == 'archlinux.acpp'
+        run: |
+          sudo pacman -Sy --noconfirm ccache
+
+      - uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ github.job }}-${{matrix.machine}}-${{matrix.ccache-key-extra}}
+          verbose: 2
 
       - uses: actions/checkout@v6
 
