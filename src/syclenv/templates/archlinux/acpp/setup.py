@@ -114,17 +114,6 @@ class ArchLinuxAcppTemplate(TemplateBase):
             line = f"export {var}={value}"
             template += line + "\n"
 
-        # load template file
-        with open(template_file_bash) as f:
-            template += f.read()
-
-        # create a file called activate.bash
-        with open(self.args.path + "/activate.bash", "w") as f:
-            f.write(template)
-
-        with open(self.args.path + "/activate.zsh", "w") as f:
-            f.write(template)
-
         template += "function _internal_deactivate {"
         for var in ENV_VARS.keys():
             template += f"  unset {var}\n"
@@ -135,8 +124,15 @@ class ArchLinuxAcppTemplate(TemplateBase):
         with open(template_file_bash) as f:
             template += f.read()
 
-            with open(self.args.path + "/activate.sh", "w") as f:
-                f.write(template)
+        # Create activate scripts
+        with open(self.args.path + "/activate.sh", "w") as f:
+            f.write(template)
+
+        with open(self.args.path + "/activate.bash", "w") as f:
+            f.write(template)
+
+        with open(self.args.path + "/activate.zsh", "w") as f:
+            f.write(template)
 
 
 TEMPLATE_CLASS = ArchLinuxAcppTemplate
