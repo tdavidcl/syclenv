@@ -35,7 +35,7 @@ mandatory_packages = [
     "boost",
     "openmp",
     "lld",
-    "aaaanumactl",
+    "numactl",
     "python",
 ]
 
