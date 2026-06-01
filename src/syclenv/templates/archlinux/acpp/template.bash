@@ -70,7 +70,7 @@ export SYCL_LINKERFLAGS=""
 export SYCL_FLAGS="$SYCL_CXXFLAGS $SYCL_LINKERFLAGS"
 
 echo " -- environment enabled -- "
-echo "$(which syclcc)"
+echo "syclcc=\$ACPP_INSTALL_DIR/bin/acpp"
 echo "SYCL_CXXFLAGS = $SYCL_CXXFLAGS"
 echo "SYCL_LINKERFLAGS = $SYCL_LINKERFLAGS"
 echo "SYCL_FLAGS = $SYCL_FLAGS"
