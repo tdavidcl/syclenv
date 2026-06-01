@@ -58,7 +58,9 @@ if [ ! -f "$ACPP_INSTALL_DIR/bin/acpp" ]; then
 fi
 
 
-alias syclcc=$ACPP_INSTALL_DIR/bin/acpp
+syclcc() {
+  "$ACPP_INSTALL_DIR/bin/acpp" "$@"
+}
 export SYCL_CXXFLAGS="-std=c++17 -O3"
 export SYCL_LINKERFLAGS=""
 export SYCL_FLAGS="$SYCL_CXXFLAGS $SYCL_LINKERFLAGS"
