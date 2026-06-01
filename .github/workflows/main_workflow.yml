@@ -83,6 +83,23 @@ jobs:
         shell: bash
         run: eval "$(./syclenv activate .yolo)"
 
+      - name: Create SYCL source file
+        run: |
+          cat << 'EOF' > main.cpp
+          #include <sycl/sycl.hpp>
+
+          int main(){
+              return 0;
+          }
+          EOF
+
+      - name: compile a hello world program
+        shell: bash
+        run:  |
+          eval "$(./syclenv activate .yolo)"
+          syclcc $SYCL_FLAGS main.cpp
+          ./a.out
+
       - name: activate and deactivate restore shell environment
         shell: bash
         run: |
