@@ -15,6 +15,8 @@ from syclenv.templates.TemplateBase import TemplateBase
 template_file_bash = files(__package__) / "template.bash"
 template_file_prerequisites = files(__package__) / "prerequisites.bash"
 
+common_helper_scripts = files(__package__) / ".." / ".." / ".." / "helper_scripts"
+clone_acpp_bash = common_helper_scripts / "clone_acpp.bash"
 
 mandatory_packages = [
     "base-devel",
@@ -98,7 +100,7 @@ class ArchLinuxAcppTemplate(TemplateBase):
 
         template = ""
 
-        template += fetch_helper_script(files(__package__) / "clone_acpp.bash")
+        template += fetch_helper_script(clone_acpp_bash)
 
         # add env vars to template
         for var, value in env_vars.items():

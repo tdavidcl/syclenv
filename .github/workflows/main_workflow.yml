@@ -75,6 +75,10 @@ jobs:
         shell: bash
         run: ./syclenv create --noconfirm --install-prerequisites archlinux.acpp .yolo
 
+      - name: cat activate script
+        shell: bash
+        run: cat .yolo/activate.bash
+
       - name: activate syclenv
         shell: bash
         run: eval "$(./syclenv activate .yolo)"
