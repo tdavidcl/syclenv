@@ -63,7 +63,7 @@ fi
 
 
 syclcc() {
-  "$ACPP_INSTALL_DIR/bin/acpp" "$@"
+  "$ACPP_INSTALL_DIR/bin/acpp" "$@" || return
 }
 export SYCL_CXXFLAGS="-std=c++17 -O3"
 export SYCL_LINKERFLAGS=""
