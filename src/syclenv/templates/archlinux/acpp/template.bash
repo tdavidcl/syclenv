@@ -46,9 +46,13 @@ function deactivate {
     unset ACPP_INSTALL_DIR
     unset CCACHE_COMPILERTYPE
     unset CCACHE_CMAKE_ARG
+    unset SYCL_CXXFLAGS
+    unset SYCL_LINKERFLAGS
+    unset SYCL_FLAGS
     unset -f clone_acpp
     unset -f run_setup
     unset -f deactivate
+    unset -f syclcc
 }
 
 if [ ! -f "$ACPP_INSTALL_DIR/bin/acpp" ]; then
