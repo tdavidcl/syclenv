@@ -2,6 +2,7 @@ from importlib.resources import files
 from pathlib import Path
 
 from syclenv.detect_buildsystem import get_buildsystem_command
+from syclenv.helper_scripts.helper_script_utils import fetch_helper_script
 from syclenv.run_cmd import run_cmd
 from syclenv.templates.archlinux.utils import (
     get_pacman_llvm_install_dir,
@@ -96,6 +97,8 @@ class ArchLinuxAcppTemplate(TemplateBase):
         Path(self.args.path).mkdir(parents=True, exist_ok=True)
 
         template = ""
+
+        template += fetch_helper_script(files(__package__) / "clone_acpp.bash")
 
         # add env vars to template
         for var, value in env_vars.items():
