@@ -28,6 +28,9 @@ Any valid environment satisfy the following:
 # Will setup the env at this stage if not already done.
 eval "$(./syclenv activate <env name>)"
 
+# To compile we provide alias + default flags
+syclcc $SYCL_FLAGS main.cpp
+
 # provide deactivate command that MUST restore the env
 # in the same state as before the activation
 deactivate
