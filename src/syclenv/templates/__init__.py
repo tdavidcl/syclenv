@@ -75,7 +75,18 @@ def run_setup(template_class: TemplateBase, install_prerequisites: bool):
 def setup_env(
     template_name: str, env_dir_path: str, install_prerequisites: bool, noconfirm: bool
 ) -> None:
-    mod = get_template_module(template_name)
+    try:
+        mod = get_template_module(template_name)
+    except ValueError as e:
+        print_panel("Error", str(e), color="red")
+        tlist = get_templates_list()
+        lst = ""
+        for k, v in tlist.items():
+            if len(lst) > 0:
+                lst += "\n"
+            lst += f"{k}: {v}"
+        print_panel("Chose a valid template from the list below", lst, color="green")
+        raise ValueError(f"Template {template_name} not found")
 
     print("--------------------------------")
     print(f"Setting up env {template_name} in {env_dir_path}")

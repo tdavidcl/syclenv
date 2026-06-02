@@ -1,28 +1,3 @@
-
-function clone_acpp {
-
-    ACPP_URL="https://github.com/AdaptiveCpp/AdaptiveCpp.git"
-
-    if [ -z ${ACPP_GIT_DIR+x} ]; then echo "ACPP_GIT_DIR is unset"; return 1; fi
-
-    if [ ! -f "$ACPP_GIT_DIR/README.md" ]; then
-        echo " ------ Clonning AdaptiveCpp ------ "
-
-        if [ -z ${ACPP_VERSION+x} ]
-        then
-            echo "-> git clone $ACPP_URL $ACPP_GIT_DIR"
-            git clone $ACPP_URL $ACPP_GIT_DIR || return
-        else
-            echo "-> git clone -b $ACPP_VERSION $ACPP_URL $ACPP_GIT_DIR"
-            git clone -b $ACPP_VERSION $ACPP_URL $ACPP_GIT_DIR || return
-        fi
-
-        echo " ------  AdaptiveCpp Cloned  ------ "
-
-    fi
-
-}
-
 if which ccache &>/dev/null; then
     # to debug
     #export CCACHE_DEBUG=1
@@ -64,15 +39,6 @@ function run_setup {
     (cd ${ACPP_BUILD_DIR} && $MAKE_EXEC "${MAKE_OPT[@]}" && $MAKE_EXEC install) || return
 }
 
-if [ ! -f "$ACPP_INSTALL_DIR/bin/acpp" ]; then
-    echo " -- environment not configured, running setup -- "
-    run_setup || return
-    echo " -- environment setup complete -- "
-fi
-
-echo " -- environment enabled -- "
-echo "acpp available in \$ACPP_INSTALL_DIR = $ACPP_INSTALL_DIR"
-
 function deactivate {
     _internal_deactivate
     unset ACPP_GIT_DIR
@@ -80,7 +46,32 @@ function deactivate {
     unset ACPP_INSTALL_DIR
     unset CCACHE_COMPILERTYPE
     unset CCACHE_CMAKE_ARG
+    unset SYCL_CXXFLAGS
+    unset SYCL_LINKERFLAGS
+    unset SYCL_FLAGS
     unset -f clone_acpp
     unset -f run_setup
     unset -f deactivate
+    unset -f syclcc
 }
+
+if [ ! -f "$ACPP_INSTALL_DIR/bin/acpp" ]; then
+    echo " -- environment not configured, running setup -- "
+    run_setup || return
+    echo " -- environment setup complete -- "
+fi
+
+
+syclcc() {
+  "$ACPP_INSTALL_DIR/bin/acpp" "$@" || return
+}
+export SYCL_CXXFLAGS="-std=c++17 -O3"
+export SYCL_LINKERFLAGS=""
+export SYCL_FLAGS="$SYCL_CXXFLAGS $SYCL_LINKERFLAGS"
+
+echo " -- environment enabled -- "
+echo "syclcc = \$ACPP_INSTALL_DIR/bin/acpp"
+echo "SYCL_CXXFLAGS = $SYCL_CXXFLAGS"
+echo "SYCL_LINKERFLAGS = $SYCL_LINKERFLAGS"
+echo "SYCL_FLAGS = $SYCL_FLAGS"
+echo " -- ------------------- -- "

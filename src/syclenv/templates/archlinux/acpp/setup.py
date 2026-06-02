@@ -2,6 +2,7 @@ from importlib.resources import files
 from pathlib import Path
 
 from syclenv.detect_buildsystem import get_buildsystem_command
+from syclenv.helper_scripts.helper_script_utils import fetch_helper_script
 from syclenv.run_cmd import run_cmd
 from syclenv.templates.archlinux.utils import (
     get_pacman_llvm_install_dir,
@@ -14,6 +15,8 @@ from syclenv.templates.TemplateBase import TemplateBase
 template_file_bash = files(__package__) / "template.bash"
 template_file_prerequisites = files(__package__) / "prerequisites.bash"
 
+common_helper_scripts = files(__package__) / ".." / ".." / ".." / "helper_scripts"
+clone_acpp_bash = common_helper_scripts / "clone_acpp.bash"
 
 mandatory_packages = [
     "base-devel",
@@ -96,6 +99,8 @@ class ArchLinuxAcppTemplate(TemplateBase):
         Path(self.args.path).mkdir(parents=True, exist_ok=True)
 
         template = ""
+
+        template += fetch_helper_script(clone_acpp_bash)
 
         # add env vars to template
         for var, value in env_vars.items():
