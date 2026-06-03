@@ -1,20 +1,21 @@
-# SYCLENV (what if python venvs existed for SYCL)
+# SYCLenv (what if python venvs existed for SYCL)
 
 ## TLDR
 
-You want SYCL on arch linux. BOOM just do
+You want SYCL on a system. BOOM just do
 ```bash
 git clone https://github.com/tdavidcl/syclenv.git && cd syclenv
-./syclenv create --install-prerequisites archlinux.acpp .yolo
+./syclenv create --install-prerequisites <system config> .yolo
 eval "$(./syclenv activate .yolo)"
 ```
+where `<system config>` is the name of a supported template (e.g. `archlinux.acpp`, `macos.brew.acpp`, ...). You can check the list by doing `./syclenv list`.
+
+## What is considered a valid environment ?
 
 To add a new env just create a folder somewhere in src/syclenv/envs with a setup.py in it.
 It should when called write activate scripts into the supplied path.
 
 The philosophy is that the env creation should be instantaneous (almost). Then the actual compilation and all occurs on first activation.
-
-## What is considered a valid environment ?
 
 Any valid environment satisfy the following:
 ```bash
