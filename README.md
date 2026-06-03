@@ -10,6 +10,11 @@ eval "$(./syclenv activate .yolo)"
 ```
 where `<system config>` is the name of a supported template (e.g. `archlinux.acpp`, `macos.brew.acpp`, ...). You can check the list by doing `./syclenv list`.
 
+now that the environment is activated you can compile some SYCL like this (`syclcc` is an alias to the compiler and `SYCL_FLAGS` to the default compile flags)
+```bash
+syclcc $SYCL_FLAGS main.cpp
+```
+
 ## What is considered a valid environment ?
 
 To add a new env just create a folder somewhere in src/syclenv/envs with a setup.py in it.
