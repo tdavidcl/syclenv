@@ -49,6 +49,7 @@ function deactivate {
     unset SYCL_CXXFLAGS
     unset SYCL_LINKERFLAGS
     unset SYCL_FLAGS
+    unset SYCLCC_PATH
     unset -f clone_acpp
     unset -f run_setup
     unset -f deactivate
@@ -61,16 +62,17 @@ if [ ! -f "$ACPP_INSTALL_DIR/bin/acpp" ]; then
     echo " -- environment setup complete -- "
 fi
 
+SYCLCC_PATH=$ACPP_INSTALL_DIR/bin/acpp
 
 syclcc() {
-  "$ACPP_INSTALL_DIR/bin/acpp" "$@" || return
+  $SYCLCC_PATH "$@" || return
 }
 export SYCL_CXXFLAGS="-std=c++17 -O3"
 export SYCL_LINKERFLAGS=""
 export SYCL_FLAGS="$SYCL_CXXFLAGS $SYCL_LINKERFLAGS"
 
 echo " -- environment enabled -- "
-echo "syclcc = \$ACPP_INSTALL_DIR/bin/acpp"
+echo "syclcc = $SYCLCC_PATH"
 echo "SYCL_CXXFLAGS = $SYCL_CXXFLAGS"
 echo "SYCL_LINKERFLAGS = $SYCL_LINKERFLAGS"
 echo "SYCL_FLAGS = $SYCL_FLAGS"
