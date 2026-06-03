@@ -41,22 +41,22 @@ jobs:
           ##########################################################################################
           # MacOS
           ##########################################################################################
-          - machine: macos-generic.acpp
+          - machine: macos.brew.acpp
             runson: macos-14
             imagename: MacOS-14
             ccache-key-extra: macos14
 
-          - machine: macos-generic.acpp
+          - machine: macos.brew.acpp
             runson: macos-15
             imagename: MacOS-15
             ccache-key-extra: macos15
 
-          - machine: macos-generic.acpp
+          - machine: macos.brew.acpp
             runson: macos-15-intel
             imagename: MacOS-15 (intel)
             ccache-key-extra: macos15-intel
 
-          - machine: macos-generic.acpp
+          - machine: macos.brew.acpp
             runson: macos-26
             imagename: MacOS-26
             ccache-key-extra: macos26
@@ -92,11 +92,11 @@ jobs:
 
       - name: build syclenv (fail if no prerequisites installed)
         shell: bash
-        run: ./syclenv create archlinux.acpp .yolo || true
+        run: ./syclenv create ${{ matrix.machine }} .yolo || true
 
       - name: build syclenv (and install prerequisites)
         shell: bash
-        run: ./syclenv create --noconfirm --install-prerequisites archlinux.acpp .yolo
+        run: ./syclenv create --noconfirm --install-prerequisites ${{ matrix.machine }} .yolo
 
       - name: cat activate script
         shell: bash
