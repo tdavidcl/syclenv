@@ -1,12 +1,26 @@
 #!/bin/sh
+set -e
 
 if command -v uv >/dev/null 2>&1; then
     exec uv run syclenv "$@"
-elif command -v python >/dev/null 2>&1; then
-    exec python -m syclenv "$@"
-elif command -v python3 >/dev/null 2>&1; then
-    exec python3 -m syclenv "$@"
 else
-    echo "No python, python3, or uv found"
-    exit 1
+    if command -v python3 >/dev/null 2>&1; then
+        PYTHON=python3
+    elif command -v python >/dev/null 2>&1; then
+        PYTHON=python
+    else
+        echo "No python, python3, or uv found" >&2
+        exit 1
+    fi
+
+    VENV_DIR=".syclenv-venv"
+
+    if [ ! -d "$VENV_DIR" ]; then
+        "$PYTHON" -m venv "$VENV_DIR"
+        "$VENV_DIR/bin/python" -m pip install --upgrade pip
+    fi
+
+    echo "Running through pip ... (longer startup time). To be faster install 'uv'"
+    "$VENV_DIR/bin/python" -m pip install --disable-pip-version-check -q -e .
+    exec "$VENV_DIR/bin/syclenv" "$@"
 fi
