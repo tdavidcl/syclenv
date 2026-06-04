@@ -32,7 +32,7 @@ jobs:
           ##########################################################################################
           # Arch Linux
           ##########################################################################################
-          - machine: archlinux.acpp
+          - machine: os.archlinux.acpp
             container: archlinux/archlinux:base-devel
             runson: ubuntu-latest
             imagename: ArchLinux
@@ -41,22 +41,22 @@ jobs:
           ##########################################################################################
           # MacOS
           ##########################################################################################
-          - machine: macos.brew.acpp
+          - machine: os.macos.acpp
             runson: macos-14
             imagename: MacOS-14
             ccache-key-extra: macos14
 
-          - machine: macos.brew.acpp
+          - machine: os.macos.acpp
             runson: macos-15
             imagename: MacOS-15
             ccache-key-extra: macos15
 
-          - machine: macos.brew.acpp
+          - machine: os.macos.acpp
             runson: macos-15-intel
             imagename: MacOS-15 (intel)
             ccache-key-extra: macos15-intel
 
-          - machine: macos.brew.acpp
+          - machine: os.macos.acpp
             runson: macos-26
             imagename: MacOS-26
             ccache-key-extra: macos26
