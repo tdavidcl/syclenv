@@ -5,7 +5,7 @@
 You want SYCL on a system. BOOM just do
 ```bash
 git clone https://github.com/tdavidcl/syclenv.git && cd syclenv
-./syclenv create --install-prerequisites <system config> .yolo
+./syclenv create <system config> .yolo --install-prerequisites
 eval "$(./syclenv activate .yolo)"
 ```
 where `<system config>` is the name of a supported template (e.g. `archlinux.acpp`, `macos.brew.acpp`, ...). You can check the list by doing `./syclenv list`.
@@ -28,7 +28,7 @@ Any valid environment satisfy the following:
 ./syclenv create <template name> <env name> -- <template specific flags>
 
 # Can add --install-prerequisites to setup depencies
-./syclenv create --install-prerequisites <> <> -- <>
+./syclenv create <> <> --install-prerequisites  -- <>
 
 # Can be activated by doing (exemple for bash/zsh here)
 # Will setup the env at this stage if not already done.
