@@ -96,7 +96,7 @@ jobs:
 
       - name: build syclenv (and install prerequisites)
         shell: bash
-        run: ./syclenv create --noconfirm --install-prerequisites ${{ matrix.machine }} .yolo
+        run: ./syclenv create ${{ matrix.machine }} .yolo --noconfirm --install-prerequisites
 
       - name: cat activate script
         shell: bash
