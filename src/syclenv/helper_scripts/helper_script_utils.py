@@ -1,3 +1,6 @@
+from importlib.resources import files
+from os.path import dirname
+
 SPACER = "\n###########################################################################"
 
 
@@ -9,3 +12,6 @@ def fetch_helper_script(path: str) -> str:
         helper_script += f"{SPACER}{SPACER}{SPACER}\n\n"
 
         return helper_script
+
+
+HELPER_SCRIPTS_DIR = dirname(files(__package__))
