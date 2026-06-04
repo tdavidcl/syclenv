@@ -11,6 +11,13 @@ def add_parser_create(subparsers) -> argparse.ArgumentParser:
     parser.add_argument(
         "--noconfirm", action="store_true", help="do not confirm commands"
     )
+    parser.add_argument(
+        "--plugin",
+        action="append",
+        default=[],
+        metavar="PLUGIN",
+        help="plugin name or path (can be specified multiple times)",
+    )
     parser.set_defaults(func=cmd_create)
     return parser
 
