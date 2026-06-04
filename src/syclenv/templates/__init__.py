@@ -11,7 +11,7 @@ from syclenv.templates.SetupArg import SetupArg
 
 console = Console()
 
-TEMPLATES_DIR = files(__package__)
+TEMPLATES_DIR = files(__package__) / ".." / "builtins" / "templates"
 
 
 def _setup_path(template_name: str) -> Path:
