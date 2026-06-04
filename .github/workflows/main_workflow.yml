@@ -65,7 +65,7 @@ jobs:
 
     steps:
       - name: Install ccache
-        if: matrix.machine == 'archlinux.acpp'
+        if: matrix.machine == 'os.archlinux.acpp'
         run: |
           sudo pacman -Sy --noconfirm ccache
 
