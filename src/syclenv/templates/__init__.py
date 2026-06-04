@@ -23,7 +23,7 @@ def get_template_module(template_name: str) -> ModuleType:
     if not setup_py.is_file():
         raise ValueError(f"Template {template_name} not found")
 
-    module_name = f"syclenv.templates.builtins.{template_name}.setup"
+    module_name = f"syclenv.builtins.templates.{template_name}.setup"
     try:
         return importlib.import_module(module_name)
     except ImportError as exc:
