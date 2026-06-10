@@ -2,11 +2,13 @@ import importlib
 from importlib.resources import files
 from pathlib import Path
 from types import ModuleType
+import glob
 
 from rich.console import Console
 from rich.panel import Panel
 
 from syclenv.templates import TemplateBase
+from syclenv.templates.PluginBase import PluginBase
 from syclenv.templates.SetupArg import SetupArg
 
 console = Console()
@@ -29,6 +31,12 @@ def get_template_module(template_name: str) -> ModuleType:
     except ImportError as exc:
         raise ValueError(f"Template {template_name} import failed") from exc
 
+def get_plugin_module(plugin_name: str) -> ModuleType:
+    module_name = f"syclenv.builtins.plugins.{plugin_name}"
+    try:
+        return importlib.import_module(module_name)
+    except ImportError as exc:
+        raise ValueError(f"Plugin {plugin_name} import failed ({module_name})") from exc
 
 def get_templates_list() -> dict[str, str]:
     templates: dict[str, str] = {}
@@ -48,7 +56,7 @@ def print_panel(title: str, message: str, color: str = "red"):
     console.print(panel)
 
 
-def run_setup(template_class: TemplateBase, install_prerequisites: bool):
+def run_setup(template_class: TemplateBase, install_prerequisites: bool, plugin_classes: list[PluginBase]):
     print(f"Checking prerequisites for {template_class.name}")
     is_ok, error_message = template_class.check_prerequisites()
 
@@ -73,7 +81,7 @@ def run_setup(template_class: TemplateBase, install_prerequisites: bool):
 
 
 def setup_env(
-    template_name: str, env_dir_path: str, install_prerequisites: bool, noconfirm: bool
+    template_name: str, env_dir_path: str, install_prerequisites: bool, noconfirm: bool, plugins : list[str]
 ) -> None:
     try:
         mod = get_template_module(template_name)
@@ -88,12 +96,28 @@ def setup_env(
         print_panel("Chose a valid template from the list below", lst, color="green")
         raise ValueError(f"Template {template_name} not found")
 
+    plugins_modules = []
+    for p in plugins:
+        try:
+            plugins_modules.append( get_plugin_module(p))
+        except ValueError as e:
+            print_panel("Error", str(e), color="red")
+            raise ValueError(f"Plugin {p} not found")
+
+
+
     print("--------------------------------")
     print(f"Setting up env {template_name} in {env_dir_path}")
     print("--------------------------------")
 
     setup_arg = SetupArg(env_dir_path, noconfirm)
-    run_setup(mod.TEMPLATE_CLASS(setup_arg), install_prerequisites)
+
+    plugin_classes = []
+    for p in plugins_modules:
+        print("-- loading plugin: ", p.PLUGIN_CLASS.name)
+        plugin_classes.append(p.PLUGIN_CLASS(setup_arg))
+
+    run_setup(mod.TEMPLATE_CLASS(setup_arg), install_prerequisites, plugin_classes)
 
     print("--------------------------------")
     print("Setup complete")

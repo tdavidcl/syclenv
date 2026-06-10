@@ -30,6 +30,7 @@ def cmd_create(args: argparse.Namespace) -> int:
         args.path,
         install_prerequisites=args.install_prerequisites,
         noconfirm=args.noconfirm,
+        plugins = args.plugin
     )
 
     return 0
