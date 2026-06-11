@@ -93,4 +93,4 @@ jobs:
         shell: bash
         env:
           MACHINE: ${{ matrix.machine }}
-        run: ./.github/worlflows/test_env.bash
+        run: .github/workflows/test_env.bash
