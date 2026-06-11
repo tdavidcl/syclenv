@@ -56,17 +56,32 @@ echo "=== verify activate/deactivate restores shell environment ==="
 )
 
 echo "=== rebuild syclenv with hello world plugin ==="
+
+remove_hello_world_artifacts() {
+    rm -f \
+        helloworld__afterenv \
+        helloworld__beforeenv \
+        helloworld__init \
+        helloworld__prereq_check
+}
+
+check_hello_world_artifacts() {
+    local file
+
+    for file in \
+        helloworld__afterenv \
+        helloworld__beforeenv \
+        helloworld__init \
+        helloworld__prereq_check; do
+        [[ -f "$file" ]] || {
+            echo "Missing expected file: $file" >&2
+            return 1
+        }
+    done
+}
+
 ./syclenv create "$MACHINE" .yolo --plugin hello_world
 
-for file in \
-    helloworld__afterenv \
-    helloworld__beforeenv \
-    helloworld__init \
-    helloworld__prereq_check; do
-    [[ -f "$file" ]] || {
-        echo "Missing expected file: $file" >&2
-        exit 1
-    }
-done
+check_hello_world_artifacts
 
 echo "=== success ==="
