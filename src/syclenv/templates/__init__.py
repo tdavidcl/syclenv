@@ -7,7 +7,11 @@ from rich.console import Console
 from rich.panel import Panel
 
 from syclenv.templates import TemplateBase
-from syclenv.templates.PluginBase import PluginBase
+from syclenv.templates.PluginBase import (
+    PluginBase,
+    implements_after_create_env,
+    implements_before_create_env,
+)
 from syclenv.templates.SetupArg import SetupArg
 
 console = Console()
@@ -57,22 +61,18 @@ def print_panel(title: str, message: str, color: str = "red"):
     console.print(panel)
 
 
-def run_setup(
-    template_class: TemplateBase,
-    install_prerequisites: bool,
-    plugin_classes: list[PluginBase],
-):
-    print(f"Checking prerequisites for {template_class.name}")
-    is_ok, error_message = template_class.check_prerequisites()
+def meta_run_prerequisites(inputclass, install_prerequisites: bool, *args):
+    print(f"Checking prerequisites for {inputclass.name}")
+    is_ok, error_message = inputclass.check_prerequisites(*args)
 
     if not is_ok:
         if install_prerequisites:
             print_panel("prerequisites failed", error_message, color="yellow")
             print("Installing prerequisites...")
-            template_class.install_prerequisites()
+            inputclass.install_prerequisites(*args)
 
-            print(f"Checking prerequisites again for {template_class.name}")
-            is_ok, error_message = template_class.check_prerequisites()
+            print(f"Checking prerequisites again for {inputclass.name}")
+            is_ok, error_message = inputclass.check_prerequisites(*args)
             if not is_ok:
                 print_panel("Error", error_message, color="red")
                 raise ValueError("Prerequisites failed")
@@ -80,9 +80,30 @@ def run_setup(
             print_panel("Error", error_message, color="red")
             raise ValueError("Prerequisites failed")
 
+
+def run_setup(
+    template_class: TemplateBase,
+    install_prerequisites: bool,
+    plugin_classes: list[PluginBase],
+):
+    meta_run_prerequisites(template_class, install_prerequisites)
+
+    for p in plugin_classes:
+        meta_run_prerequisites(p, install_prerequisites, template_class)
+
+    for p in plugin_classes:
+        if implements_before_create_env(p):
+            print(f"-- applying before env step for plugin {p.name}")
+            p.before_create_env(template_class)
+
     print(f"Creating env for {template_class.name}")
     template_class.create_env()
     print(f"Env created for {template_class.name}")
+
+    for p in plugin_classes:
+        if implements_after_create_env(p):
+            print(f"-- applying after env step for plugin {p.name}")
+            p.after_create_env(template_class)
 
 
 def setup_env(
