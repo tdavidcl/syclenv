@@ -12,9 +12,6 @@ from syclenv.utils.macos import (
 template_file_bash = files(__package__) / "template.bash"
 template_file_prerequisites = files(__package__) / "prerequisites.bash"
 
-common_helper_scripts = files(__package__) / ".." / ".." / ".." / "helper_scripts"
-clone_acpp_bash = common_helper_scripts / "clone_acpp.bash"
-
 mandatory_packages = [
     "adaptivecpp",
     "cmake",

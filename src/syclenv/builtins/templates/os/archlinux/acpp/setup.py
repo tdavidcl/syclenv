@@ -2,7 +2,10 @@ from importlib.resources import files
 from pathlib import Path
 
 from syclenv.detect_buildsystem import get_buildsystem_command
-from syclenv.helper_scripts.helper_script_utils import fetch_helper_script
+from syclenv.helper_scripts.helper_script_utils import (
+    HELPER_SCRIPTS_DIR,
+    fetch_helper_script,
+)
 from syclenv.run_cmd import run_cmd
 from syclenv.templates.SetupArg import SetupArg
 from syclenv.templates.TemplateBase import TemplateBase
@@ -15,8 +18,7 @@ from syclenv.utils.archlinux import (
 template_file_bash = files(__package__) / "template.bash"
 template_file_prerequisites = files(__package__) / "prerequisites.bash"
 
-common_helper_scripts = files(__package__) / ".." / ".." / ".." / "helper_scripts"
-clone_acpp_bash = common_helper_scripts / "clone_acpp.bash"
+clone_acpp_bash = HELPER_SCRIPTS_DIR / "clone_acpp.bash"
 
 mandatory_packages = [
     "base-devel",
