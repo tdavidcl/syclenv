@@ -1,11 +1,12 @@
 from syclenv.templates import SetupArg
 from syclenv.templates.PluginBase import PluginBase
 
+
 class HelloWorldPlugin(PluginBase):
     name = "hello world"
-    description= "hello world again !"
+    description = "hello world again !"
 
-    def __init__(self, args : SetupArg):
+    def __init__(self, args: SetupArg):
         print("hello world from hello world plugin")
 
     def check_prerequisites(self, template) -> tuple[bool, str]:
@@ -20,5 +21,6 @@ class HelloWorldPlugin(PluginBase):
 
     def after_create_env(self, template) -> None:
         print("patching env with a nice hello world")
+
 
 PLUGIN_CLASS = HelloWorldPlugin
