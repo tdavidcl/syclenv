@@ -55,4 +55,18 @@ echo "=== verify activate/deactivate restores shell environment ==="
     ./scripts/compare-shell-env-snapshots.sh "$before" "$after"
 )
 
+echo "=== rebuild syclenv with hello world plugin ==="
+./syclenv create "$MACHINE" .yolo --plugin hello_world
+
+for file in \
+    helloworld__afterenv \
+    helloworld__beforeenv \
+    helloworld__init \
+    helloworld__prereq_check; do
+    [[ -f "$file" ]] || {
+        echo "Missing expected file: $file" >&2
+        exit 1
+    }
+done
+
 echo "=== success ==="
