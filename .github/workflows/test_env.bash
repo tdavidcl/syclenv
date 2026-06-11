@@ -84,4 +84,6 @@ check_hello_world_artifacts() {
 
 check_hello_world_artifacts
 
+remove_hello_world_artifacts
+
 echo "=== success ==="
