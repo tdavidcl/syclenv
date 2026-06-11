@@ -17,7 +17,6 @@ jobs:
 
       - uses: pre-commit/action@v3.0.1
 
-
   tests:
     name: "${{ matrix.imagename }} -- ${{ matrix.machine }} -- ${{ matrix.args }}"
     runs-on: ${{ matrix.runson }}
@@ -90,51 +89,8 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
 
-      - name: build syclenv (fail if no prerequisites installed)
+      - name: Run syclenv integration test
         shell: bash
-        run: ./syclenv create ${{ matrix.machine }} .yolo || true
-
-      - name: build syclenv (and install prerequisites)
-        shell: bash
-        run: ./syclenv create ${{ matrix.machine }} .yolo --noconfirm --install-prerequisites
-
-      - name: cat activate script
-        shell: bash
-        run: cat .yolo/activate.bash
-
-      - name: activate syclenv
-        shell: bash
-        run: eval "$(./syclenv activate .yolo)"
-
-      - name: Create SYCL source file
-        run: |
-          cat << 'EOF' > main.cpp
-          #include <sycl/sycl.hpp>
-
-          int main(){
-              return 0;
-          }
-          EOF
-
-      - name: compile a hello world program
-        shell: bash
-        run:  |
-          eval "$(./syclenv activate .yolo)"
-          syclcc $SYCL_FLAGS main.cpp
-          ./a.out
-
-      - name: activate and deactivate restore shell environment
-        shell: bash
-        run: |
-          before="$(mktemp)"
-          after="$(mktemp)"
-          trap 'rm -f "$before" "$after"' EXIT
-
-          ./scripts/snapshot-shell-env.sh "$before"
-
-          eval "$(./syclenv activate .yolo)"
-          deactivate
-          ./scripts/snapshot-shell-env.sh "$after"
-
-          set -euo pipefail
-          ./scripts/compare-shell-env-snapshots.sh "$before" "$after"
+        env:
+          MACHINE: ${{ matrix.machine }}
+        run: ./.github/worlflows/test_env.bash
