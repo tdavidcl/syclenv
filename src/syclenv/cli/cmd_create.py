@@ -28,7 +28,7 @@ def cmd_create(args: argparse.Namespace) -> int:
     from syclenv.templates import setup_env
 
     load_plugins()
-    
+
     setup_env(
         args.template,
         args.path,

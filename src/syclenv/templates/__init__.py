@@ -4,7 +4,7 @@ from pathlib import Path
 from types import ModuleType
 
 from syclenv.logs import print_panel
-from syclenv.plugins import LOADED_PLUGINS, load_plugins, run_plugin_hook_template_list
+from syclenv.plugins import LOADED_PLUGINS, run_plugin_hook_template_list
 from syclenv.plugins.PluginBase import (
     implements_after_create_env,
     implements_before_create_env,
@@ -106,7 +106,6 @@ def setup_env(
             lst += f"{k}: {v}"
         print_panel("Chose a valid template from the list below", lst, color="green")
         raise ValueError(f"Template {template_name} not found")
-
 
     print("--------------------------------")
     print(f"Setting up env {template_name} in {env_dir_path}")

@@ -14,7 +14,6 @@ def cmd_list(args: argparse.Namespace) -> int:
 
     load_plugins()
 
-
     for path, name in get_templates_list().items():
         print(f"{path}: {name}")
     return 0

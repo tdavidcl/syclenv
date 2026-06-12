@@ -1,6 +1,7 @@
 import importlib
-from types import ModuleType
 import os
+from types import ModuleType
+
 from syclenv.logs import print_panel
 from syclenv.plugins.PluginBase import implements_template_list_hook
 
@@ -20,9 +21,7 @@ def load_plugins():
     global LOADED_PLUGINS
 
     plugins = [
-        p.strip()
-        for p in os.environ.get("SYCLENV_PLUGINS", "").split(",")
-        if p.strip()
+        p.strip() for p in os.environ.get("SYCLENV_PLUGINS", "").split(",") if p.strip()
     ]
 
     for p in plugins:
