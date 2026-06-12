@@ -1,5 +1,10 @@
 from typing import Protocol
 
+"""
+A plugin is a general list of hook that will be applied on the corresponding step.
+It is not bound to the execution of a specific template but to syclenv as a whole
+"""
+
 
 class PluginBase(Protocol):
     name: str
