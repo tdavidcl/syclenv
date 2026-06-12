@@ -10,7 +10,7 @@ def add_parser_list(subparsers) -> argparse.ArgumentParser:
 
 
 def cmd_list(args: argparse.Namespace) -> int:
-    from syclenv.templates import get_templates_list
+    from syclenv.plugins import get_templates_list
 
     load_plugins()
 

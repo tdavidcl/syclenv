@@ -26,7 +26,7 @@ def load_plugins():
     ]
 
     # Should be like this to avoid a print
-    #LOADED_PLUGINS.append(SYCLEnvMainPlugin())
+    # LOADED_PLUGINS.append(SYCLEnvMainPlugin())
     plugins = ["syclenv.builtins.plugins.syclenv"] + plugins
 
     for p in plugins:
@@ -39,7 +39,8 @@ def load_plugins():
             raise ValueError(f"Plugin {p} not found")
 
 
-def run_plugin_hook_template_list(templates: dict[str, str]) -> dict[str, str]:
+def get_templates_list() -> dict[str, str]:
+    templates: dict[str, str] = {}
     for p in LOADED_PLUGINS:
         if implements_template_list_hook(p):
             templates = p.template_list_hook(templates)

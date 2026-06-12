@@ -3,15 +3,15 @@ from pathlib import Path
 from types import ModuleType
 
 from syclenv.logs import print_panel
-from syclenv.plugins import LOADED_PLUGINS, run_plugin_hook_template_list
+from syclenv.plugins import LOADED_PLUGINS, get_templates_list
 from syclenv.plugins.PluginBase import (
     implements_after_create_env,
     implements_before_create_env,
 )
 from syclenv.templates import TemplateBase
 from syclenv.templates.SetupArg import SetupArg
+from syclenv.templates.TEMPLATES_DIR import TEMPLATES_DIR
 
-from syclenv.templates.TEMPLATES_DIR import  TEMPLATES_DIR
 
 def _setup_path(template_name: str) -> Path:
     return TEMPLATES_DIR.joinpath(*template_name.split("."), "setup.py")
@@ -35,11 +35,6 @@ def get_native_templates_list() -> dict[str, str]:
         template_name = ".".join(setup_py.relative_to(TEMPLATES_DIR).parts[:-1])
         mod = get_template_module(template_name)
         templates[template_name] = mod.TEMPLATE_CLASS.name
-    return templates
-
-def get_templates_list() -> dict[str, str]:
-    templates: dict[str, str] = {}
-    templates = run_plugin_hook_template_list(templates)
     return templates
 
 
