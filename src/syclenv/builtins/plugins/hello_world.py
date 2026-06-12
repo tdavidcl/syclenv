@@ -22,5 +22,8 @@ class HelloWorldPlugin(PluginBase):
     def after_create_env(self, template) -> None:
         run_bash_cmd("touch helloworld__afterenv")
 
+    def template_list_hook(self, original: dict[str, str]) -> dict[str, str]:
+        return {**original, "hello world": "hello world"}
+
 
 PLUGIN_CLASS = HelloWorldPlugin

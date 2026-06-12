@@ -10,6 +10,13 @@ class PluginBase(Protocol):
     name: str
     description: str
 
+    def template_list_hook(self, original: dict[str, str]) -> dict[str, str]: 
+        '''
+        Intercept the generation of the template list
+        '''
+        ...
+
+
     def check_prerequisites(self, template) -> tuple[bool, str]: ...
 
     def install_prerequisites(self, template) -> None: ...
@@ -18,7 +25,6 @@ class PluginBase(Protocol):
 
     def after_create_env(self, template) -> None: ...
 
-    def template_list_hook(self, original: dict[str, str]) -> dict[str, str]: ...
 
 
 def implements_before_create_env(plugin):
