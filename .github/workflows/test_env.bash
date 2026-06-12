@@ -80,7 +80,8 @@ check_hello_world_artifacts() {
     done
 }
 
-./syclenv create "$MACHINE" .yolo --plugin hello_world
+SYCLENV_PLUGINS=syclenv.builtins.plugins.hello_world
+./syclenv create "$MACHINE" .yolo
 
 check_hello_world_artifacts
 
