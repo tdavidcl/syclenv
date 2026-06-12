@@ -1,5 +1,4 @@
 import importlib
-from importlib.resources import files
 from pathlib import Path
 from types import ModuleType
 
@@ -12,8 +11,7 @@ from syclenv.plugins.PluginBase import (
 from syclenv.templates import TemplateBase
 from syclenv.templates.SetupArg import SetupArg
 
-TEMPLATES_DIR = files(__package__) / ".." / "builtins" / "templates"
-
+from syclenv.templates.TEMPLATES_DIR import  TEMPLATES_DIR
 
 def _setup_path(template_name: str) -> Path:
     return TEMPLATES_DIR.joinpath(*template_name.split("."), "setup.py")
@@ -31,15 +29,17 @@ def get_template_module(template_name: str) -> ModuleType:
         raise ValueError(f"Template {template_name} import failed") from exc
 
 
-def get_templates_list() -> dict[str, str]:
+def get_native_templates_list() -> dict[str, str]:
     templates: dict[str, str] = {}
     for setup_py in TEMPLATES_DIR.glob("**/setup.py"):
         template_name = ".".join(setup_py.relative_to(TEMPLATES_DIR).parts[:-1])
         mod = get_template_module(template_name)
         templates[template_name] = mod.TEMPLATE_CLASS.name
+    return templates
 
+def get_templates_list() -> dict[str, str]:
+    templates: dict[str, str] = {}
     templates = run_plugin_hook_template_list(templates)
-
     return templates
 
 

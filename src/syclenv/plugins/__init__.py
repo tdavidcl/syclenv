@@ -14,6 +14,7 @@ def get_plugin_module(plugin_name: str) -> ModuleType:
         raise ValueError(f"Plugin {plugin_name} import failed ({module_name})") from exc
 
 
+# Note that the order matter
 LOADED_PLUGINS = []
 
 
@@ -23,6 +24,10 @@ def load_plugins():
     plugins = [
         p.strip() for p in os.environ.get("SYCLENV_PLUGINS", "").split(",") if p.strip()
     ]
+
+    # Should be like this to avoid a print
+    #LOADED_PLUGINS.append(SYCLEnvMainPlugin())
+    plugins = ["syclenv.builtins.plugins.syclenv"] + plugins
 
     for p in plugins:
         try:
