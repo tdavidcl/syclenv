@@ -4,11 +4,10 @@ from pathlib import Path
 from types import ModuleType
 
 from syclenv.logs import print_panel
-from syclenv.plugins import LOADED_PLUGINS, load_plugins
+from syclenv.plugins import LOADED_PLUGINS, load_plugins, run_plugin_hook_template_list
 from syclenv.plugins.PluginBase import (
     implements_after_create_env,
     implements_before_create_env,
-    implements_template_list_hook,
 )
 from syclenv.templates import TemplateBase
 from syclenv.templates.SetupArg import SetupArg
@@ -38,11 +37,9 @@ def get_templates_list() -> dict[str, str]:
         template_name = ".".join(setup_py.relative_to(TEMPLATES_DIR).parts[:-1])
         mod = get_template_module(template_name)
         templates[template_name] = mod.TEMPLATE_CLASS.name
-    
-    for p in LOADED_PLUGINS:
-        if implements_template_list_hook(p):
-            templates = p.on_template_list(templates)
-    
+
+    run_plugin_hook_template_list(templates)
+
     return templates
 
 

@@ -2,6 +2,7 @@ import importlib
 from types import ModuleType
 
 from syclenv.logs import print_panel
+from syclenv.plugins.PluginBase import implements_template_list_hook
 
 
 def get_plugin_module(plugin_name: str) -> ModuleType:
@@ -25,3 +26,10 @@ def load_plugins(plugins: list[str]):
         except ValueError as e:
             print_panel("Error", str(e), color="red")
             raise ValueError(f"Plugin {p} not found")
+
+
+def run_plugin_hook_template_list(templates: dict[str, str]) -> dict[str, str]:
+    for p in LOADED_PLUGINS:
+        if implements_template_list_hook(p):
+            templates = p.on_template_list(templates)
+    return templates
