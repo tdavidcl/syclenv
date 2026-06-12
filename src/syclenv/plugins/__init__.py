@@ -15,9 +15,9 @@ def get_plugin_module(plugin_name: str) -> ModuleType:
 LOADED_PLUGINS = []
 
 
-def load_plugins(plugins : list[str]):
+def load_plugins(plugins: list[str]):
     global LOADED_PLUGINS
-    
+
     for p in plugins:
         try:
             mod = get_plugin_module(p)
@@ -25,4 +25,3 @@ def load_plugins(plugins : list[str]):
         except ValueError as e:
             print_panel("Error", str(e), color="red")
             raise ValueError(f"Plugin {p} not found")
-
