@@ -26,8 +26,9 @@ def load_plugins():
     ]
 
     # Should be like this to avoid a print
-    # LOADED_PLUGINS.append(SYCLEnvMainPlugin())
-    plugins = ["syclenv.builtins.plugins.syclenv"] + plugins
+    from syclenv.builtins.plugins.syclenv import SYCLEnvMainPlugin
+    LOADED_PLUGINS.append(SYCLEnvMainPlugin())
+    #plugins = ["syclenv.builtins.plugins.syclenv"] + plugins
 
     for p in plugins:
         try:
