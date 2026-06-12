@@ -1,6 +1,6 @@
 import importlib
 from types import ModuleType
-
+import os
 from syclenv.logs import print_panel
 from syclenv.plugins.PluginBase import implements_template_list_hook
 
@@ -16,11 +16,18 @@ def get_plugin_module(plugin_name: str) -> ModuleType:
 LOADED_PLUGINS = []
 
 
-def load_plugins(plugins: list[str]):
+def load_plugins():
     global LOADED_PLUGINS
+
+    plugins = [
+        p.strip()
+        for p in os.environ.get("SYCLENV_PLUGINS", "").split(",")
+        if p.strip()
+    ]
 
     for p in plugins:
         try:
+            print(f"Loading plugin : {p}")
             mod = get_plugin_module(p)
             LOADED_PLUGINS.append(mod.PLUGIN_CLASS())
         except ValueError as e:
@@ -31,5 +38,5 @@ def load_plugins(plugins: list[str]):
 def run_plugin_hook_template_list(templates: dict[str, str]) -> dict[str, str]:
     for p in LOADED_PLUGINS:
         if implements_template_list_hook(p):
-            templates = p.on_template_list(templates)
+            templates = p.template_list_hook(templates)
     return templates

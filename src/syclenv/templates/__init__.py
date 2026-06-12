@@ -38,7 +38,7 @@ def get_templates_list() -> dict[str, str]:
         mod = get_template_module(template_name)
         templates[template_name] = mod.TEMPLATE_CLASS.name
 
-    run_plugin_hook_template_list(templates)
+    templates = run_plugin_hook_template_list(templates)
 
     return templates
 
@@ -107,7 +107,6 @@ def setup_env(
         print_panel("Chose a valid template from the list below", lst, color="green")
         raise ValueError(f"Template {template_name} not found")
 
-    load_plugins(plugins)
 
     print("--------------------------------")
     print(f"Setting up env {template_name} in {env_dir_path}")
