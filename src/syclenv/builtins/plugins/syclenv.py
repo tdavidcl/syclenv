@@ -1,3 +1,5 @@
+from types import ModuleType
+
 from syclenv.plugins.PluginBase import PluginBase
 from syclenv.templates import TEMPLATES_DIR, get_template_module
 
@@ -18,6 +20,12 @@ class SYCLEnvMainPlugin(PluginBase):
             mod = get_template_module(template_name)
             templates[template_name] = mod.TEMPLATE_CLASS.name
         return templates
+
+    def on_get_template_module(self, template_name: str) -> ModuleType | None:
+        try:
+            return get_template_module(template_name)
+        except ValueError:
+            return None
 
 
 PLUGIN_CLASS = SYCLEnvMainPlugin

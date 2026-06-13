@@ -3,7 +3,6 @@ from pathlib import Path
 from types import ModuleType
 
 from syclenv.logs import print_panel
-from syclenv.plugins import LOADED_PLUGINS, run_on_template_list
 from syclenv.plugins.PluginBase import implements
 from syclenv.templates.SetupArg import SetupArg
 from syclenv.templates.TemplateBase import TemplateBase
@@ -50,6 +49,8 @@ def run_setup(
     template_class: TemplateBase,
     install_prerequisites: bool,
 ):
+    from syclenv.plugins import LOADED_PLUGINS
+
     meta_run_prerequisites(template_class, install_prerequisites)
 
     for p in LOADED_PLUGINS:
@@ -77,8 +78,10 @@ def setup_env(
     noconfirm: bool,
     plugins: list[str],
 ) -> None:
+    from syclenv.plugins import run_get_template_class, run_on_template_list
+
     try:
-        mod = get_template_module(template_name)
+        template_class = run_get_template_class(template_name)
     except ValueError as e:
         print_panel("Error", str(e), color="red")
         tlist = run_on_template_list()
@@ -96,7 +99,7 @@ def setup_env(
 
     setup_arg = SetupArg(env_dir_path, noconfirm)
 
-    run_setup(mod.TEMPLATE_CLASS(setup_arg), install_prerequisites)
+    run_setup(template_class(setup_arg), install_prerequisites)
 
     print("--------------------------------")
     print("Setup complete")
