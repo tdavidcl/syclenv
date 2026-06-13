@@ -3,6 +3,12 @@ set -euo pipefail
 
 : "${MACHINE:?MACHINE environment variable must be set}"
 
+echo "=== list syclenv templates ==="
+./syclenv diagnose
+
+echo "=== list syclenv templates ==="
+./syclenv list
+
 echo "=== build syclenv (fail if no prerequisites installed) ==="
 ./syclenv create "$MACHINE" .yolo || true
 
