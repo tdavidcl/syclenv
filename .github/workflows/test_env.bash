@@ -3,6 +3,12 @@ set -euo pipefail
 
 : "${MACHINE:?MACHINE environment variable must be set}"
 
+echo "=== list syclenv templates ==="
+./syclenv diagnose
+
+echo "=== list syclenv templates ==="
+./syclenv list
+
 echo "=== build syclenv (fail if no prerequisites installed) ==="
 ./syclenv create "$MACHINE" .yolo || true
 
@@ -80,7 +86,16 @@ check_hello_world_artifacts() {
     done
 }
 
+echo "=== set SYCLENV_PLUGINS ==="
 export SYCLENV_PLUGINS=syclenv.builtins.plugins.hello_world
+
+echo "=== list syclenv templates ==="
+./syclenv diagnose
+
+echo "=== list syclenv templates ==="
+./syclenv list
+
+echo "=== create syclenv ==="
 ./syclenv create "$MACHINE" .yolo
 
 check_hello_world_artifacts

@@ -15,6 +15,11 @@ class SYCLEnvMainPlugin(PluginBase):
     def on_install_prerequisites(self, template) -> None: ...
 
     def on_template_list(self, original: dict[str, str]) -> dict[str, str]:
+        # original should be empty this plugin must be first
+        # because we will ignore its content
+        if original:
+            raise ValueError("SYCLEnvMainPlugin must be first in the plugin list")
+
         return get_native_templates_list()
 
 
