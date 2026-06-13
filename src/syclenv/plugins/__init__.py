@@ -3,7 +3,6 @@ from __future__ import annotations
 import importlib
 import os
 from types import ModuleType
-
 from typing import TYPE_CHECKING
 
 from syclenv.logs import print_panel
@@ -87,9 +86,7 @@ def run_get_template_class(template_name: str) -> type[TemplateBase]:
 
     template_class = getattr(mod, "TEMPLATE_CLASS", None)
     if template_class is None:
-        raise ValueError(
-            f"Template module {template_name!r} is missing TEMPLATE_CLASS"
-        )
+        raise ValueError(f"Template module {template_name!r} is missing TEMPLATE_CLASS")
 
     if not isinstance(template_class, type) or not issubclass(
         template_class, TemplateBase
