@@ -3,7 +3,7 @@ import os
 from types import ModuleType
 
 from syclenv.logs import print_panel
-from syclenv.plugins.PluginBase import implements_template_list_hook
+from syclenv.plugins.PluginBase import implements
 
 
 def get_plugin_module(plugin_name: str) -> ModuleType:
@@ -27,8 +27,9 @@ def load_plugins():
 
     # Should be like this to avoid a print
     from syclenv.builtins.plugins.syclenv import SYCLEnvMainPlugin
+
     LOADED_PLUGINS.append(SYCLEnvMainPlugin())
-    #plugins = ["syclenv.builtins.plugins.syclenv"] + plugins
+    # plugins = ["syclenv.builtins.plugins.syclenv"] + plugins
 
     for p in plugins:
         try:
@@ -43,6 +44,6 @@ def load_plugins():
 def get_templates_list() -> dict[str, str]:
     templates: dict[str, str] = {}
     for p in LOADED_PLUGINS:
-        if implements_template_list_hook(p):
-            templates = p.template_list_hook(templates)
+        if implements(p, "on_template_list"):
+            templates = p.on_template_list(templates)
     return templates

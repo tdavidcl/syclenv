@@ -55,7 +55,7 @@ class ArchLinuxAcppTemplate(TemplateBase):
     def __init__(self, args: SetupArg):
         self.args = args
 
-    def check_prerequisites(self) -> tuple[bool, str]:
+    def on_check_prerequisites(self) -> tuple[bool, str]:
         if get_pacman_llvm_version() is None:
             return False, (
                 "No LLVM 20 or 21 found via pacman. Install one with:\n"
@@ -75,7 +75,7 @@ class ArchLinuxAcppTemplate(TemplateBase):
             )
         return True, None
 
-    def install_prerequisites(self) -> None:
+    def on_install_prerequisites(self) -> None:
         cmd = f"sudo pacman -Sy --noconfirm {' '.join(default_install_packages)}"
 
         if self.args.noconfirm:

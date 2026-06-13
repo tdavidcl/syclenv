@@ -33,7 +33,7 @@ class MacOSBrewAcppTemplate(TemplateBase):
     def __init__(self, args: SetupArg):
         self.args = args
 
-    def check_prerequisites(self) -> tuple[bool, str]:
+    def on_check_prerequisites(self) -> tuple[bool, str]:
         missing_packages = []
         for package in mandatory_packages:
             if not has_brew_packages([package]):
@@ -47,7 +47,7 @@ class MacOSBrewAcppTemplate(TemplateBase):
             )
         return True, None
 
-    def install_prerequisites(self) -> None:
+    def on_install_prerequisites(self) -> None:
         cmd = f"brew install {' '.join(default_install_packages)}"
 
         if self.args.noconfirm:

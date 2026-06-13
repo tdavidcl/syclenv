@@ -1,37 +1,29 @@
-from typing import Protocol
+from abc import ABC
 
-"""
-A plugin is a general list of hook that will be applied on the corresponding step.
-It is not bound to the execution of a specific template but to syclenv as a whole
-"""
+# Plugins expose optional on_* event hooks invoked by syclenv at lifecycle points.
+# Hooks are not bound to a specific template; the core itself is also a plugin.
 
 
-class PluginBase(Protocol):
+class PluginBase(ABC):
     name: str
     description: str
 
-    def template_list_hook(self, original: dict[str, str]) -> dict[str, str]:
-        """
-        Intercept the generation of the template list
-        """
-        ...
+    def on_template_list(self, original: dict[str, str]) -> dict[str, str]:
+        """Called when building the template list."""
+        return original
 
-    def check_prerequisites(self, template) -> tuple[bool, str]: ...
+    def on_check_prerequisites(self, template) -> tuple[bool, str]:
+        return True, ""
 
-    def install_prerequisites(self, template) -> None: ...
+    def on_install_prerequisites(self, template) -> None:
+        pass
 
-    def before_create_env(self, template) -> None: ...
+    def on_before_create_env(self, template) -> None:
+        pass
 
-    def after_create_env(self, template) -> None: ...
-
-
-def implements_before_create_env(plugin):
-    return plugin.__class__.before_create_env is not PluginBase.before_create_env
+    def on_after_create_env(self, template) -> None:
+        pass
 
 
-def implements_after_create_env(plugin):
-    return plugin.__class__.after_create_env is not PluginBase.after_create_env
-
-
-def implements_template_list_hook(plugin):
-    return plugin.__class__.template_list_hook is not PluginBase.template_list_hook
+def implements(plugin: PluginBase, hook: str) -> bool:
+    return getattr(type(plugin), hook) is not getattr(PluginBase, hook)

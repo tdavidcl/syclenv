@@ -4,12 +4,9 @@ from types import ModuleType
 
 from syclenv.logs import print_panel
 from syclenv.plugins import LOADED_PLUGINS, get_templates_list
-from syclenv.plugins.PluginBase import (
-    implements_after_create_env,
-    implements_before_create_env,
-)
-from syclenv.templates import TemplateBase
+from syclenv.plugins.PluginBase import implements
 from syclenv.templates.SetupArg import SetupArg
+from syclenv.templates.TemplateBase import TemplateBase
 from syclenv.templates.TEMPLATES_DIR import TEMPLATES_DIR
 
 
@@ -40,16 +37,16 @@ def get_native_templates_list() -> dict[str, str]:
 
 def meta_run_prerequisites(inputclass, install_prerequisites: bool, *args):
     print(f"Checking prerequisites for {inputclass.name}")
-    is_ok, error_message = inputclass.check_prerequisites(*args)
+    is_ok, error_message = inputclass.on_check_prerequisites(*args)
 
     if not is_ok:
         if install_prerequisites:
             print_panel("prerequisites failed", error_message, color="yellow")
             print("Installing prerequisites...")
-            inputclass.install_prerequisites(*args)
+            inputclass.on_install_prerequisites(*args)
 
             print(f"Checking prerequisites again for {inputclass.name}")
-            is_ok, error_message = inputclass.check_prerequisites(*args)
+            is_ok, error_message = inputclass.on_check_prerequisites(*args)
             if not is_ok:
                 print_panel("Error", error_message, color="red")
                 raise ValueError("Prerequisites failed")
@@ -68,18 +65,18 @@ def run_setup(
         meta_run_prerequisites(p, install_prerequisites, template_class)
 
     for p in LOADED_PLUGINS:
-        if implements_before_create_env(p):
+        if implements(p, "on_before_create_env"):
             print(f"-- applying before env step for plugin {p.name}")
-            p.before_create_env(template_class)
+            p.on_before_create_env(template_class)
 
     print(f"Creating env for {template_class.name}")
     template_class.create_env()
     print(f"Env created for {template_class.name}")
 
     for p in LOADED_PLUGINS:
-        if implements_after_create_env(p):
+        if implements(p, "on_after_create_env"):
             print(f"-- applying after env step for plugin {p.name}")
-            p.after_create_env(template_class)
+            p.on_after_create_env(template_class)
 
 
 def setup_env(
