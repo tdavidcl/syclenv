@@ -55,7 +55,24 @@ def run_on_template_list() -> dict[str, str]:
     return templates
 
 
+def format_template_list(templates: dict[str, str], indent_str: str = "  ") -> str:
+    return "\n".join(
+        f"{indent_str}{name}: {description}" for name, description in templates.items()
+    )
+
+
 def run_get_template_module(template_name: str) -> ModuleType:
+    # Plugins may filter templates via on_template_list; only listed names are valid.
+    templates = run_on_template_list()
+    if template_name not in templates:
+        print_panel(
+            "Error",
+            f"Template {template_name!r} is not in the template list.\n\n"
+            + f"Valid templates are:\n{format_template_list(templates)}",
+            color="red",
+        )
+        raise ValueError(f"Template {template_name!r} is not in the template list.")
+
     matches: list[tuple[str, ModuleType]] = []
     for p in LOADED_PLUGINS:
         if not implements(p, "on_get_template_module"):

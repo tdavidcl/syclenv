@@ -78,20 +78,9 @@ def setup_env(
     noconfirm: bool,
     plugins: list[str],
 ) -> None:
-    from syclenv.plugins import run_get_template_class, run_on_template_list
+    from syclenv.plugins import run_get_template_class
 
-    try:
-        template_class = run_get_template_class(template_name)
-    except ValueError as e:
-        print_panel("Error", str(e), color="red")
-        tlist = run_on_template_list()
-        lst = ""
-        for k, v in tlist.items():
-            if len(lst) > 0:
-                lst += "\n"
-            lst += f"{k}: {v}"
-        print_panel("Chose a valid template from the list below", lst, color="green")
-        raise ValueError(f"Template {template_name} not found")
+    template_class = run_get_template_class(template_name)
 
     print("--------------------------------")
     print(f"Setting up env {template_name} in {env_dir_path}")
