@@ -1,9 +1,15 @@
+from __future__ import annotations
+
 import importlib
 import os
 from types import ModuleType
+from typing import TYPE_CHECKING
 
 from syclenv.logs import print_panel
 from syclenv.plugins.PluginBase import implements
+
+if TYPE_CHECKING:
+    from syclenv.templates.TemplateBase import TemplateBase
 
 
 def get_plugin_module(plugin_name: str) -> ModuleType:
@@ -41,9 +47,71 @@ def load_plugins():
             raise ValueError(f"Plugin {p} not found")
 
 
-def get_templates_list() -> dict[str, str]:
+def run_on_template_list() -> dict[str, str]:
     templates: dict[str, str] = {}
     for p in LOADED_PLUGINS:
         if implements(p, "on_template_list"):
             templates = p.on_template_list(templates)
     return templates
+
+
+def format_template_list(templates: dict[str, str], indent_str: str = "  ") -> str:
+    return "\n".join(
+        f"{indent_str}{name}: {description}" for name, description in templates.items()
+    )
+
+
+def run_get_template_module(template_name: str) -> ModuleType:
+    # Plugins may filter templates via on_template_list; only listed names are valid.
+    templates = run_on_template_list()
+    if template_name not in templates:
+        print_panel(
+            "Error",
+            f"Template {template_name!r} is not in the template list.\n\n"
+            + f"Valid templates are:\n{format_template_list(templates)}",
+            color="red",
+        )
+        raise ValueError(f"Template {template_name!r} is not in the template list.")
+
+    matches: list[tuple[str, ModuleType]] = []
+    for p in LOADED_PLUGINS:
+        if not implements(p, "on_get_template_module"):
+            continue
+        mod = p.on_get_template_module(template_name)
+        if mod is not None:
+            matches.append((p.name, mod))
+
+    if not matches:
+        raise ValueError(f"Template {template_name} not found")
+
+    # If there are multiple matches, we return the last one (and warn the user)
+    if len(matches) > 1:
+        plugin_names = ", ".join(name for name, _ in matches)
+        print_panel(
+            "Warning",
+            f"Multiple plugins resolved {template_name!r}: {plugin_names}. "
+            f"Using {matches[-1][0]}.",
+            color="yellow",
+        )
+
+    return matches[-1][1]
+
+
+def run_get_template_class(template_name: str) -> type[TemplateBase]:
+    from syclenv.templates.TemplateBase import TemplateBase
+
+    mod = run_get_template_module(template_name)
+
+    template_class = getattr(mod, "TEMPLATE_CLASS", None)
+    if template_class is None:
+        raise ValueError(f"Template module {template_name!r} is missing TEMPLATE_CLASS")
+
+    if not isinstance(template_class, type) or not issubclass(
+        template_class, TemplateBase
+    ):
+        raise ValueError(
+            f"TEMPLATE_CLASS in {template_name!r} must be a subclass of "
+            f"TemplateBase, got {template_class!r}"
+        )
+
+    return template_class

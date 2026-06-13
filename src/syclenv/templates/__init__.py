@@ -3,7 +3,6 @@ from pathlib import Path
 from types import ModuleType
 
 from syclenv.logs import print_panel
-from syclenv.plugins import LOADED_PLUGINS, get_templates_list
 from syclenv.plugins.PluginBase import implements
 from syclenv.templates.SetupArg import SetupArg
 from syclenv.templates.TemplateBase import TemplateBase
@@ -24,15 +23,6 @@ def get_template_module(template_name: str) -> ModuleType:
         return importlib.import_module(module_name)
     except ImportError as exc:
         raise ValueError(f"Template {template_name} import failed") from exc
-
-
-def get_native_templates_list() -> dict[str, str]:
-    templates: dict[str, str] = {}
-    for setup_py in TEMPLATES_DIR.glob("**/setup.py"):
-        template_name = ".".join(setup_py.relative_to(TEMPLATES_DIR).parts[:-1])
-        mod = get_template_module(template_name)
-        templates[template_name] = mod.TEMPLATE_CLASS.name
-    return templates
 
 
 def meta_run_prerequisites(inputclass, install_prerequisites: bool, *args):
@@ -59,6 +49,8 @@ def run_setup(
     template_class: TemplateBase,
     install_prerequisites: bool,
 ):
+    from syclenv.plugins import LOADED_PLUGINS
+
     meta_run_prerequisites(template_class, install_prerequisites)
 
     for p in LOADED_PLUGINS:
@@ -86,18 +78,9 @@ def setup_env(
     noconfirm: bool,
     plugins: list[str],
 ) -> None:
-    try:
-        mod = get_template_module(template_name)
-    except ValueError as e:
-        print_panel("Error", str(e), color="red")
-        tlist = get_templates_list()
-        lst = ""
-        for k, v in tlist.items():
-            if len(lst) > 0:
-                lst += "\n"
-            lst += f"{k}: {v}"
-        print_panel("Chose a valid template from the list below", lst, color="green")
-        raise ValueError(f"Template {template_name} not found")
+    from syclenv.plugins import run_get_template_class
+
+    template_class = run_get_template_class(template_name)
 
     print("--------------------------------")
     print(f"Setting up env {template_name} in {env_dir_path}")
@@ -105,7 +88,7 @@ def setup_env(
 
     setup_arg = SetupArg(env_dir_path, noconfirm)
 
-    run_setup(mod.TEMPLATE_CLASS(setup_arg), install_prerequisites)
+    run_setup(template_class(setup_arg), install_prerequisites)
 
     print("--------------------------------")
     print("Setup complete")
