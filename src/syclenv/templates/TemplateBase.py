@@ -1,25 +1,20 @@
-from abc import abstractmethod
-from typing import Protocol
+from abc import ABC, abstractmethod
 
-from syclenv.templates import SetupArg
+from syclenv.templates.SetupArg import SetupArg
 
 
-class TemplateBase(Protocol):
+class TemplateBase(ABC):
     name: str
     description: str
 
     @abstractmethod
-    def __init__(self, args: SetupArg):
-        raise NotImplementedError
+    def __init__(self, args: SetupArg): ...
 
     @abstractmethod
-    def check_prerequisites(self) -> tuple[bool, str]:
-        raise NotImplementedError
+    def on_check_prerequisites(self) -> tuple[bool, str]: ...
 
     @abstractmethod
-    def install_prerequisites(self) -> None:
-        raise NotImplementedError
+    def on_install_prerequisites(self) -> None: ...
 
     @abstractmethod
-    def create_env(self) -> None:
-        raise NotImplementedError
+    def create_env(self) -> None: ...

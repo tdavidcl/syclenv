@@ -1,5 +1,7 @@
 import argparse
 
+from syclenv.plugins import load_plugins
+
 
 def add_parser_create(subparsers) -> argparse.ArgumentParser:
     parser = subparsers.add_parser("create", help="create a new environment")
@@ -24,6 +26,8 @@ def add_parser_create(subparsers) -> argparse.ArgumentParser:
 
 def cmd_create(args: argparse.Namespace) -> int:
     from syclenv.templates import setup_env
+
+    load_plugins()
 
     setup_env(
         args.template,

@@ -1,22 +1,13 @@
 import importlib
-from importlib.resources import files
 from pathlib import Path
 from types import ModuleType
 
-from rich.console import Console
-from rich.panel import Panel
-
-from syclenv.templates import TemplateBase
-from syclenv.templates.PluginBase import (
-    PluginBase,
-    implements_after_create_env,
-    implements_before_create_env,
-)
+from syclenv.logs import print_panel
+from syclenv.plugins import LOADED_PLUGINS, get_templates_list
+from syclenv.plugins.PluginBase import implements
 from syclenv.templates.SetupArg import SetupArg
-
-console = Console()
-
-TEMPLATES_DIR = files(__package__) / ".." / "builtins" / "templates"
+from syclenv.templates.TemplateBase import TemplateBase
+from syclenv.templates.TEMPLATES_DIR import TEMPLATES_DIR
 
 
 def _setup_path(template_name: str) -> Path:
@@ -35,15 +26,7 @@ def get_template_module(template_name: str) -> ModuleType:
         raise ValueError(f"Template {template_name} import failed") from exc
 
 
-def get_plugin_module(plugin_name: str) -> ModuleType:
-    module_name = f"syclenv.builtins.plugins.{plugin_name}"
-    try:
-        return importlib.import_module(module_name)
-    except ImportError as exc:
-        raise ValueError(f"Plugin {plugin_name} import failed ({module_name})") from exc
-
-
-def get_templates_list() -> dict[str, str]:
+def get_native_templates_list() -> dict[str, str]:
     templates: dict[str, str] = {}
     for setup_py in TEMPLATES_DIR.glob("**/setup.py"):
         template_name = ".".join(setup_py.relative_to(TEMPLATES_DIR).parts[:-1])
@@ -52,27 +35,18 @@ def get_templates_list() -> dict[str, str]:
     return templates
 
 
-def print_panel(title: str, message: str, color: str = "red"):
-    panel = Panel(
-        message,
-        title=title,
-        border_style=color,
-    )
-    console.print(panel)
-
-
 def meta_run_prerequisites(inputclass, install_prerequisites: bool, *args):
     print(f"Checking prerequisites for {inputclass.name}")
-    is_ok, error_message = inputclass.check_prerequisites(*args)
+    is_ok, error_message = inputclass.on_check_prerequisites(*args)
 
     if not is_ok:
         if install_prerequisites:
             print_panel("prerequisites failed", error_message, color="yellow")
             print("Installing prerequisites...")
-            inputclass.install_prerequisites(*args)
+            inputclass.on_install_prerequisites(*args)
 
             print(f"Checking prerequisites again for {inputclass.name}")
-            is_ok, error_message = inputclass.check_prerequisites(*args)
+            is_ok, error_message = inputclass.on_check_prerequisites(*args)
             if not is_ok:
                 print_panel("Error", error_message, color="red")
                 raise ValueError("Prerequisites failed")
@@ -84,26 +58,25 @@ def meta_run_prerequisites(inputclass, install_prerequisites: bool, *args):
 def run_setup(
     template_class: TemplateBase,
     install_prerequisites: bool,
-    plugin_classes: list[PluginBase],
 ):
     meta_run_prerequisites(template_class, install_prerequisites)
 
-    for p in plugin_classes:
+    for p in LOADED_PLUGINS:
         meta_run_prerequisites(p, install_prerequisites, template_class)
 
-    for p in plugin_classes:
-        if implements_before_create_env(p):
+    for p in LOADED_PLUGINS:
+        if implements(p, "on_before_create_env"):
             print(f"-- applying before env step for plugin {p.name}")
-            p.before_create_env(template_class)
+            p.on_before_create_env(template_class)
 
     print(f"Creating env for {template_class.name}")
     template_class.create_env()
     print(f"Env created for {template_class.name}")
 
-    for p in plugin_classes:
-        if implements_after_create_env(p):
+    for p in LOADED_PLUGINS:
+        if implements(p, "on_after_create_env"):
             print(f"-- applying after env step for plugin {p.name}")
-            p.after_create_env(template_class)
+            p.on_after_create_env(template_class)
 
 
 def setup_env(
@@ -126,26 +99,13 @@ def setup_env(
         print_panel("Chose a valid template from the list below", lst, color="green")
         raise ValueError(f"Template {template_name} not found")
 
-    plugins_modules = []
-    for p in plugins:
-        try:
-            plugins_modules.append(get_plugin_module(p))
-        except ValueError as e:
-            print_panel("Error", str(e), color="red")
-            raise ValueError(f"Plugin {p} not found")
-
     print("--------------------------------")
     print(f"Setting up env {template_name} in {env_dir_path}")
     print("--------------------------------")
 
     setup_arg = SetupArg(env_dir_path, noconfirm)
 
-    plugin_classes = []
-    for p in plugins_modules:
-        print("-- loading plugin: ", p.PLUGIN_CLASS.name)
-        plugin_classes.append(p.PLUGIN_CLASS(setup_arg))
-
-    run_setup(mod.TEMPLATE_CLASS(setup_arg), install_prerequisites, plugin_classes)
+    run_setup(mod.TEMPLATE_CLASS(setup_arg), install_prerequisites)
 
     print("--------------------------------")
     print("Setup complete")
