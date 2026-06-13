@@ -84,6 +84,7 @@ def run_get_template_module(template_name: str) -> ModuleType:
     if not matches:
         raise ValueError(f"Template {template_name} not found")
 
+    # If there are multiple matches, we return the last one (and warn the user)
     if len(matches) > 1:
         plugin_names = ", ".join(name for name, _ in matches)
         print_panel(
