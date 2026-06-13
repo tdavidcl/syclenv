@@ -41,7 +41,7 @@ def load_plugins():
             raise ValueError(f"Plugin {p} not found")
 
 
-def get_templates_list() -> dict[str, str]:
+def run_on_template_list() -> dict[str, str]:
     templates: dict[str, str] = {}
     for p in LOADED_PLUGINS:
         if implements(p, "on_template_list"):

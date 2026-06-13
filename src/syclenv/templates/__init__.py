@@ -3,7 +3,7 @@ from pathlib import Path
 from types import ModuleType
 
 from syclenv.logs import print_panel
-from syclenv.plugins import LOADED_PLUGINS, get_templates_list
+from syclenv.plugins import LOADED_PLUGINS, run_on_template_list
 from syclenv.plugins.PluginBase import implements
 from syclenv.templates.SetupArg import SetupArg
 from syclenv.templates.TemplateBase import TemplateBase
@@ -24,15 +24,6 @@ def get_template_module(template_name: str) -> ModuleType:
         return importlib.import_module(module_name)
     except ImportError as exc:
         raise ValueError(f"Template {template_name} import failed") from exc
-
-
-def get_native_templates_list() -> dict[str, str]:
-    templates: dict[str, str] = {}
-    for setup_py in TEMPLATES_DIR.glob("**/setup.py"):
-        template_name = ".".join(setup_py.relative_to(TEMPLATES_DIR).parts[:-1])
-        mod = get_template_module(template_name)
-        templates[template_name] = mod.TEMPLATE_CLASS.name
-    return templates
 
 
 def meta_run_prerequisites(inputclass, install_prerequisites: bool, *args):
@@ -90,7 +81,7 @@ def setup_env(
         mod = get_template_module(template_name)
     except ValueError as e:
         print_panel("Error", str(e), color="red")
-        tlist = get_templates_list()
+        tlist = run_on_template_list()
         lst = ""
         for k, v in tlist.items():
             if len(lst) > 0:

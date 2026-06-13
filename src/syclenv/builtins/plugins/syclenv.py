@@ -1,18 +1,10 @@
 from syclenv.plugins.PluginBase import PluginBase
-from syclenv.templates import get_native_templates_list
+from syclenv.templates import TEMPLATES_DIR, get_template_module
 
 
 class SYCLEnvMainPlugin(PluginBase):
     name = "SYCLenv main plugin"
     description = "main plugin for SYCL env. Internally it is a plugin like everyone"
-
-    def __init__(self): ...
-
-    def on_check_prerequisites(self, template) -> tuple[bool, str]:
-        ...
-        return True, " "
-
-    def on_install_prerequisites(self, template) -> None: ...
 
     def on_template_list(self, original: dict[str, str]) -> dict[str, str]:
         # original should be empty this plugin must be first
@@ -20,7 +12,12 @@ class SYCLEnvMainPlugin(PluginBase):
         if original:
             raise ValueError("SYCLEnvMainPlugin must be first in the plugin list")
 
-        return get_native_templates_list()
+        templates: dict[str, str] = {}
+        for setup_py in TEMPLATES_DIR.glob("**/setup.py"):
+            template_name = ".".join(setup_py.relative_to(TEMPLATES_DIR).parts[:-1])
+            mod = get_template_module(template_name)
+            templates[template_name] = mod.TEMPLATE_CLASS.name
+        return templates
 
 
 PLUGIN_CLASS = SYCLEnvMainPlugin
